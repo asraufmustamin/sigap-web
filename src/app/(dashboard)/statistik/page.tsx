@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
@@ -18,9 +17,15 @@ export default function StatistikPage() {
 
   const fetchReports = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('reports').select('*');
-    if (!error && data) setReports(data);
-    setLoading(false);
+    try {
+      const res = await fetch('/api/reports');
+      const data = await res.json();
+      if (res.ok && data) setReports(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Aggregation for metrics

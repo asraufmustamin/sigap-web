@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 
 export default function TopAppBar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -16,14 +15,15 @@ export default function TopAppBar() {
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      if (user?.user_metadata?.avatar_url) {
-        setAvatarUrl(user.user_metadata.avatar_url);
-      }
-    };
-    fetchUser();
+    // Get user from localStorage
+    const sessionStr = typeof window !== 'undefined' ? localStorage.getItem('user_session') : null;
+    if (sessionStr) {
+      try {
+        const parsed = JSON.parse(sessionStr);
+        setUser(parsed);
+        if (parsed?.avatar_url) setAvatarUrl(parsed.avatar_url);
+      } catch (e) {}
+    }
   }, []);
 
   // Close menus when clicking outside
@@ -41,7 +41,7 @@ export default function TopAppBar() {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    if (typeof window !== 'undefined') localStorage.removeItem('user_session');
     router.push('/login');
   };
 

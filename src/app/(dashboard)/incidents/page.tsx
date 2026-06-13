@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
@@ -16,20 +15,15 @@ export default function IncidentsPage() {
 
   useEffect(() => {
     fetchReports();
-    const channel = supabase
-      .channel('incidents:reports')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, () => fetchReports())
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    const interval = setInterval(fetchReports, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   async function fetchReports() {
     try {
-      const { data, error } = await supabase
-        .from('reports')
-        .select('*, users:reporter_id (name, phone)')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
+      const res = await fetch('/api/reports');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
       setReports(data || []);
       if (!selectedId && data && data.length > 0) {
         setSelectedId(data[0].id);
@@ -45,8 +39,12 @@ export default function IncidentsPage() {
     setUpdatingId(id);
     const toastId = toast.loading('Mengubah status...');
     try {
-      const { error } = await supabase.from('reports').update({ status: newStatus }).eq('id', id);
-      if (error) throw error;
+      const res = await fetch('/api/reports', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus })
+      });
+      if (!res.ok) throw new Error('Gagal update status');
       toast.success('Status berhasil diubah!', { id: toastId });
       fetchReports();
     } catch (err: any) {

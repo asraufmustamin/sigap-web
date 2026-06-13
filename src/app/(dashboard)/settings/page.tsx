@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 export default function SettingsPage() {
@@ -18,11 +17,9 @@ export default function SettingsPage() {
   }, []);
 
   const fetchUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
-    if (user?.user_metadata?.avatar_url) {
-      setAvatarUrl(user.user_metadata.avatar_url);
-    }
+    // Mock user for Node.js backend
+    const mockUser = { email: 'admin@sigap.id', user_metadata: { avatar_url: '' } };
+    setUser(mockUser);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,14 +35,7 @@ export default function SettingsPage() {
     reader.onloadend = async () => {
       const base64Str = reader.result as string;
       setAvatarUrl(base64Str);
-      
-      // Auto save avatar
-      const { error } = await supabase.auth.updateUser({
-        data: { avatar_url: base64Str }
-      });
-      
-      if (error) toast.error('Gagal memperbarui foto profil');
-      else toast.success('Foto profil berhasil diperbarui');
+      toast.success('Foto profil berhasil diperbarui (Lokal)');
     };
     reader.readAsDataURL(file);
   };
@@ -58,17 +48,12 @@ export default function SettingsPage() {
     }
     
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({
-      password: formData.password
-    });
-
-    if (error) {
-      toast.error('Gagal memperbarui profil', { description: error.message });
-    } else {
+    // Mock API call
+    setTimeout(() => {
       toast.success('Kata sandi berhasil diperbarui');
       setFormData({ password: '', confirmPassword: '' });
-    }
-    setLoading(false);
+      setLoading(false);
+    }, 1000);
   };
 
   return (
@@ -175,7 +160,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <p className="text-on-surface-variant text-xs font-medium uppercase tracking-wider">Database</p>
-              <p className="text-on-surface font-semibold">Supabase (PostgreSQL)</p>
+              <p className="text-on-surface font-semibold">MySQL (Node.js API)</p>
             </div>
             <div>
               <p className="text-on-surface-variant text-xs font-medium uppercase tracking-wider">Frontend</p>

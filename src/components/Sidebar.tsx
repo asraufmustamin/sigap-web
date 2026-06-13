@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Peta', icon: 'map' },
@@ -20,7 +19,7 @@ export default function Sidebar() {
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
-    await supabase.auth.signOut();
+    localStorage.removeItem('user_session');
     router.push('/login');
   };
 
