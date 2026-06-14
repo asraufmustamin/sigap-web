@@ -10,7 +10,6 @@ export default function WargaRegister() {
   const [nik, setNik] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [showNik, setShowNik] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -58,131 +57,141 @@ export default function WargaRegister() {
   };
 
   return (
-    <div className="flex-1 bg-background min-h-screen flex flex-col justify-center items-center p-4 py-8">
-      <div className="w-full max-w-[400px] bg-surface-container-lowest rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-outline-variant/30 px-6 py-8 flex flex-col items-center relative overflow-hidden">
+    <div className="flex-1 bg-[#f0f4f9] min-h-screen flex flex-col justify-center items-center p-4 md:p-8 font-body-md">
+      
+      <div className="w-full max-w-[1040px] bg-white rounded-[32px] flex flex-col md:flex-row overflow-hidden min-h-[400px] p-8 md:p-12 shadow-sm">
         
-        {/* Subtle Top Accent */}
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
-        
-        {/* Header Section */}
-        <div className="mb-6 flex flex-col items-center">
+        {/* Left Column: Branding */}
+        <div className="flex-1 flex flex-col md:pr-10 mb-10 md:mb-0">
           <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK"
-            alt="SIGAP"
-            className="w-16 h-16 rounded-full shadow-sm border border-outline-variant/20 mb-3 object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK" 
+            alt="SIGAP Logo"
+            className="w-12 h-12 rounded-full border border-gray-100 mb-6 object-cover"
           />
-          <h1 className="font-headline-md text-2xl font-bold text-primary tracking-tight">
-            Pendaftaran Warga
-          </h1>
-          <p className="font-body-md text-on-surface-variant mt-1.5 text-center text-sm px-2">
-            Daftarkan identitas Anda untuk akses ke platform pelaporan insiden.
+          <h1 className="text-4xl text-[#1f1f1f] tracking-tight mb-4" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>Buat Akun</h1>
+          <p className="text-base text-[#444746]">
+            Daftarkan identitas Anda untuk akses ke platform pelaporan insiden SIGAP.
           </p>
         </div>
 
-        {errorMsg ? (
-          <div className="w-full bg-error-container/50 border border-error/20 rounded-xl p-3 mb-5">
-            <p className="text-error font-body-sm text-center text-sm">{errorMsg}</p>
-          </div>
-        ) : null}
-
-        {/* Sign Up Form */}
-        <form onSubmit={handleRegister} className="w-full flex flex-col gap-3.5">
+        {/* Right Column: Form */}
+        <div className="flex-1 w-full max-w-[450px] md:ml-auto flex flex-col justify-between pt-2">
           
-          <div className="flex flex-col gap-1.5">
-            <label className="font-label-caps text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">Nama Lengkap Sesuai KTP</label>
-            <div className="relative justify-center flex flex-col">
-              <span className="material-symbols-outlined absolute left-3.5 z-10 text-outline text-[18px]">person</span>
-              <input 
+          <form onSubmit={handleRegister} className="flex flex-col w-full">
+            
+            {errorMsg ? (
+              <div className="flex items-center gap-2 mb-6 text-[#d93025]">
+                <span className="material-symbols-outlined text-[20px]">error</span>
+                <span className="text-sm">{errorMsg}</span>
+              </div>
+            ) : null}
+
+            {/* Name Input */}
+            <div className="mb-4 relative">
+              <input
                 type="text"
-                className="w-full bg-surface border border-outline-variant/60 text-on-surface font-body-md rounded-xl pl-10 pr-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm transition-all"
-                placeholder="Contoh: Budi Santoso"
+                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-[2px] focus:border-[#0b57d0] transition-colors"
+                placeholder=" "
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isLoading}
               />
+              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
+                Nama Lengkap Sesuai KTP
+              </label>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="font-label-caps text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">Nomor Induk Kependudukan (NIK)</label>
-            <div className="relative justify-center flex flex-col">
-              <span className="material-symbols-outlined absolute left-3.5 z-10 text-outline text-[18px]">badge</span>
-              <input 
-                type={showNik ? "text" : "password"}
-                className="w-full bg-surface border border-outline-variant/60 text-on-surface font-body-md rounded-xl pl-10 pr-10 py-3 tracking-widest outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm transition-all"
-                placeholder="16 Digit NIK"
+            {/* NIK Input */}
+            <div className="mb-4 relative">
+              <input
+                type="text"
+                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-[2px] focus:border-[#0b57d0] transition-colors"
+                placeholder=" "
                 value={nik}
                 onChange={(e) => setNik(e.target.value.replace(/[^0-9]/g, '').substring(0, 16))}
                 disabled={isLoading}
               />
-              <button 
-                type="button"
-                className="absolute right-3.5 z-10 flex items-center justify-center text-outline hover:text-primary transition-colors"
-                onClick={() => setShowNik(!showNik)}
-              >
-                <span className="material-symbols-outlined text-[18px]">{showNik ? "visibility" : "visibility_off"}</span>
-              </button>
+              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
+                Nomor Induk Kependudukan (NIK)
+              </label>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="font-label-caps text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">Nomor Handphone Aktif</label>
-            <div className="relative justify-center flex flex-col">
-              <span className="material-symbols-outlined absolute left-3.5 z-10 text-outline text-[18px]">smartphone</span>
-              <input 
+            {/* Phone Input */}
+            <div className="mb-4 relative">
+              <input
                 type="tel"
-                className="w-full bg-surface border border-outline-variant/60 text-on-surface font-body-md rounded-xl pl-10 pr-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm transition-all"
-                placeholder="Contoh: 081234567890"
+                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-[2px] focus:border-[#0b57d0] transition-colors"
+                placeholder=" "
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 disabled={isLoading}
               />
+              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
+                Nomor Handphone Aktif
+              </label>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="font-label-caps text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">Buat Kata Sandi Baru</label>
-            <div className="relative justify-center flex flex-col">
-              <span className="material-symbols-outlined absolute left-3.5 z-10 text-outline text-[18px]">lock</span>
-              <input 
+            {/* Password Input */}
+            <div className="mb-2 relative">
+              <input
                 type={showPassword ? "text" : "password"}
-                className="w-full bg-surface border border-outline-variant/60 text-on-surface font-body-md rounded-xl pl-10 pr-10 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm transition-all"
-                placeholder="Minimal 8 karakter"
+                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-[2px] focus:border-[#0b57d0] transition-colors"
+                placeholder=" "
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
               />
-              <button 
-                type="button"
-                className="absolute right-3.5 z-10 flex items-center justify-center text-outline hover:text-primary transition-colors"
-                onClick={() => setShowPassword(!showPassword)}
+              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
+                Buat Kata Sandi Baru
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2 mb-8 mt-2 cursor-pointer w-fit group" onClick={() => setShowPassword(!showPassword)}>
+              <div className={`w-4 h-4 rounded-[2px] border ${showPassword ? 'bg-[#0b57d0] border-[#0b57d0]' : 'border-[#444746]'} flex items-center justify-center transition-colors`}>
+                {showPassword && <span className="material-symbols-outlined text-white text-[14px]">check</span>}
+              </div>
+              <span className="text-sm text-[#1f1f1f] group-hover:text-[#0b57d0] transition-colors">Tampilkan sandi</span>
+            </div>
+
+            <p className="text-sm text-[#444746] mb-8 leading-relaxed">
+              Dengan membuat akun, Anda menyetujui <a href="#" className="text-[#0b57d0] hover:underline">Persyaratan Layanan</a> dan <a href="#" className="text-[#0b57d0] hover:underline">Kebijakan Privasi</a> SIGAP.
+            </p>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
+              <Link 
+                href="/warga/login" 
+                className="text-[#0b57d0] font-medium text-sm px-4 py-2.5 rounded-full hover:bg-blue-50 transition-colors text-center"
               >
-                <span className="material-symbols-outlined text-[18px]">{showPassword ? "visibility" : "visibility_off"}</span>
+                Sudah punya akun?
+              </Link>
+              <button 
+                type="submit"
+                disabled={isLoading}
+                className={`bg-[#0b57d0] text-white font-medium text-sm px-6 py-2.5 rounded-full hover:bg-[#0842a0] transition-colors flex items-center justify-center min-w-[100px] ${isLoading ? 'opacity-70' : ''}`}
+              >
+                {isLoading ? (
+                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  'Buat Akun'
+                )}
               </button>
             </div>
-          </div>
+          </form>
 
-          <button 
-            type="submit"
-            disabled={isLoading}
-            className={`w-full bg-primary py-3.5 rounded-xl mt-4 flex justify-center items-center gap-2 shadow-md transition-all ${isLoading ? 'opacity-70' : 'hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]'}`}
-          >
-            {isLoading ? (
-              <span className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
-            ) : (
-              <span className="text-on-primary font-button-text font-bold text-sm tracking-wide">DAFTAR SEKARANG</span>
-            )}
-          </button>
-        </form>
-
-        <div className="mt-6 flex items-center justify-center w-full">
-          <span className="font-body-sm text-on-surface-variant text-[13px]">Sudah memiliki akun? </span>
-          <Link href="/warga/login" className="text-primary text-[13px] font-bold ml-1 hover:underline">
-            Masuk
-          </Link>
         </div>
-
       </div>
+
+      <div className="w-full max-w-[1040px] flex justify-between items-center mt-4 px-2 text-xs text-[#444746]">
+        <div>
+          <span className="cursor-pointer hover:bg-gray-200 px-2 py-1 rounded">Indonesia <span className="material-symbols-outlined text-[12px] align-middle ml-1">arrow_drop_down</span></span>
+        </div>
+        <div className="flex gap-4">
+          <a href="#" className="hover:bg-gray-200 px-2 py-1 rounded transition-colors">Bantuan</a>
+          <a href="#" className="hover:bg-gray-200 px-2 py-1 rounded transition-colors">Privasi</a>
+          <a href="#" className="hover:bg-gray-200 px-2 py-1 rounded transition-colors">Persyaratan</a>
+        </div>
+      </div>
+
     </div>
   );
 }
