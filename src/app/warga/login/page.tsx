@@ -79,13 +79,17 @@ export default function WargaLogin() {
             <div className="mb-6 relative">
               <input
                 type="text"
-                className="peer w-full h-[56px] px-4 py-4 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] focus:px-[15px] transition-all"
+                id="identifier"
+                className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
                 placeholder=" "
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
                 disabled={isLoading}
               />
-              <label className="absolute left-3 top-[16px] bg-white px-1 text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:-top-[9px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:-top-[9px]">
+              <label
+                htmlFor="identifier"
+                className="absolute left-3 top-4 z-10 origin-[0] -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none"
+              >
                 Nomor HP atau NIK
               </label>
             </div>
@@ -94,22 +98,31 @@ export default function WargaLogin() {
             <div className="mb-2 relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="peer w-full h-[56px] px-4 py-4 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] focus:px-[15px] transition-all"
+                id="password"
+                className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
                 placeholder=" "
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
               />
-              <label className="absolute left-3 top-[16px] bg-white px-1 text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:-top-[9px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:-top-[9px]">
+              <label
+                htmlFor="password"
+                className="absolute left-3 top-4 z-10 origin-[0] -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none"
+              >
                 Kata Sandi
               </label>
             </div>
 
-            <div className="flex items-center gap-2 mb-6 mt-2 cursor-pointer w-fit group" onClick={() => setShowPassword(!showPassword)}>
-              <div className={`w-4 h-4 rounded-[2px] border ${showPassword ? 'bg-[#0b57d0] border-[#0b57d0]' : 'border-[#444746]'} flex items-center justify-center transition-colors`}>
-                {showPassword && <span className="material-symbols-outlined text-white text-[14px]">check</span>}
-              </div>
-              <span className="text-sm text-[#1f1f1f] group-hover:text-[#0b57d0] transition-colors">Tampilkan sandi</span>
+            <div className="flex items-center gap-2 mb-6 mt-2 cursor-pointer w-fit group">
+              <input 
+                type="checkbox" 
+                id="show-password"
+                className="w-4 h-4 rounded-[2px] border-[#747775] text-[#0b57d0] focus:ring-[#0b57d0] cursor-pointer"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
+              />
+              <label htmlFor="show-password" className="text-sm text-[#1f1f1f] cursor-pointer select-none">Tampilkan sandi</label>
             </div>
 
             <p className="text-sm text-[#444746] mb-8 leading-relaxed">
