@@ -15,14 +15,6 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     
-    // BYPASS SEMENTARA KARENA DATABASE MATI
-    if (email === 'admin' && password === 'admin123') {
-      toast.success('Login berhasil (Mode Akses Darurat)');
-      router.push('/');
-      setLoading(false);
-      return;
-    }
-
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
