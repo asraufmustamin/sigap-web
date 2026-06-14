@@ -2,7 +2,15 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+
+const CATEGORIES = [
+  'Bencana Alam',
+  'Kriminalitas',
+  'Kebakaran',
+  'Kecelakaan',
+  'Gangguan Keamanan',
+  'Lainnya',
+];
 
 export default function WargaLapor() {
   const router = useRouter();
@@ -10,13 +18,12 @@ export default function WargaLapor() {
   
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
   
   // Form state
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Bencana Alam');
+  const [category, setCategory] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   
   // Location state
   const [location, setLocation] = useState<{lat: number, lng: number} | null>(null);
@@ -24,7 +31,6 @@ export default function WargaLapor() {
   const [locating, setLocating] = useState(false);
 
   useEffect(() => {
-    // Cek auth
     const session = localStorage.getItem('warga_session');
     if (!session) {
       router.push('/warga/login');
@@ -48,13 +54,13 @@ export default function WargaLapor() {
         },
         (err) => {
           console.error(err);
-          setLocationError('Gagal mendapatkan lokasi. Pastikan GPS aktif dan izin diberikan.');
+          setLocationError('Gagal mendapatkan lokasi. Pastikan GPS aktif.');
           setLocating(false);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } else {
-      setLocationError('Browser Anda tidak mendukung deteksi lokasi.');
+      setLocationError('Browser tidak mendukung GPS.');
       setLocating(false);
     }
   };
@@ -72,17 +78,20 @@ export default function WargaLapor() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!location) {
-      setError('Lokasi GPS wajib diaktifkan sebelum melapor.');
+    if (!imagePreview) {
+      alert('Harap ambil foto kejadian sebagai bukti.');
       return;
     }
-    if (!imagePreview) {
-      setError('Mohon ambil foto kejadian.');
+    if (!location) {
+      alert('Harap tunggu hingga lokasi GPS terkunci atau pastikan GPS Anda aktif.');
+      return;
+    }
+    if (!category) {
+      alert('Harap pilih kategori insiden.');
       return;
     }
 
     setLoading(true);
-    setError('');
 
     try {
       const res = await fetch('/api/reports', {
@@ -93,7 +102,7 @@ export default function WargaLapor() {
           category,
           lat: location.lat,
           lng: location.lng,
-          image_url: imagePreview, // Menggunakan base64 untuk demo, sebaiknya upload ke cloud storage di production
+          image_url: imagePreview, 
           reporter_id: user?.id,
           status: 'pending'
         }),
@@ -101,186 +110,157 @@ export default function WargaLapor() {
 
       if (!res.ok) throw new Error('Gagal mengirim laporan');
 
-      setSuccess(true);
+      alert('Berhasil! Laporan Anda telah terkirim ke instansi terkait.');
+      router.replace('/warga/home');
       
     } catch (err) {
-      setError('Terjadi kesalahan koneksi saat mengirim laporan.');
+      alert('Terjadi kesalahan saat mengirim laporan.');
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('warga_session');
-    router.push('/warga/login');
-  };
-
-  if (success) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center p-6 bg-surface-container-lowest min-h-screen text-center">
-        <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
-          <span className="material-symbols-outlined text-5xl">check_circle</span>
-        </div>
-        <h1 className="text-3xl font-bold text-on-surface mb-4">Laporan Terkirim!</h1>
-        <p className="text-on-surface-variant font-body-lg mb-8">
-          Terima kasih. Laporan Anda telah masuk ke Pusat Komando dan akan segera diproses oleh Babinsa terdekat.
-        </p>
-        <button 
-          onClick={() => {
-            setSuccess(false);
-            setDescription('');
-            setImagePreview(null);
-            setCategory('Bencana Alam');
-          }}
-          className="w-full bg-primary text-on-primary py-4 rounded-2xl font-bold mb-4"
-        >
-          Kirim Laporan Lain
-        </button>
-        <Link href="/warga/riwayat" className="w-full bg-surface-container text-on-surface py-4 rounded-2xl font-bold flex items-center justify-center">
-          Lihat Riwayat Saya
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col min-h-screen bg-surface-container-lowest pb-24">
-      {/* App Bar */}
-      <div className="bg-primary text-on-primary p-4 shadow-md sticky top-0 z-10 flex justify-between items-center">
+    <div className="flex-1 bg-surface min-h-screen flex flex-col relative pb-32">
+      {/* TopAppBar */}
+      <div className="flex items-center justify-between px-5 w-full h-16 bg-surface z-10 border-b border-outline-variant/30 sticky top-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <span className="material-symbols-outlined">person</span>
-          </div>
-          <div>
-            <h2 className="font-bold text-sm leading-tight">{user?.name || 'Warga'}</h2>
-            <p className="text-xs opacity-80">Siap Lapor</p>
-          </div>
+          <img 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK" 
+            className="w-8 h-8 rounded-full object-cover"
+            alt="SIGAP"
+          />
+          <h1 className="font-headline-md text-xl font-bold text-primary tracking-tight">SIGAP</h1>
         </div>
-        <button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-          <span className="material-symbols-outlined">logout</span>
+        <button 
+          className="p-2 rounded-full hover:bg-surface-container-high transition-colors"
+          onClick={() => router.back()}
+        >
+          <span className="material-symbols-outlined text-[24px] text-on-surface-variant">close</span>
         </button>
       </div>
 
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6 text-on-surface">Buat Laporan Baru</h1>
+      {/* Camera Section */}
+      <div 
+        onClick={() => fileInputRef.current?.click()}
+        className="w-full relative bg-black flex flex-col items-center justify-center cursor-pointer overflow-hidden group h-[280px]"
+      >
+        {imagePreview ? (
+          <img src={imagePreview} alt="Preview" className="w-full h-full object-cover opacity-90 group-hover:opacity-75 transition-opacity" />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-white/70">
+            <span className="material-symbols-outlined text-6xl mb-4">photo_camera</span>
+            <span className="font-body-lg font-medium">Tap untuk Buka Kamera</span>
+          </div>
+        )}
+        <input 
+          type="file" 
+          accept="image/*" 
+          capture="environment" 
+          ref={fileInputRef}
+          onChange={handleImageCapture}
+          className="hidden"
+        />
+        {imagePreview && (
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+            <div className="bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm border border-white/30 flex items-center gap-2">
+              <span className="material-symbols-outlined text-white text-sm">refresh</span>
+              <span className="text-white text-sm font-bold tracking-wider">FOTO ULANG</span>
+            </div>
+          </div>
+        )}
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="p-4 bg-error-container text-on-error-container rounded-xl text-sm font-medium">
-              {error}
+      {/* Form Elements Area */}
+      <div className="px-5 py-6 flex-col gap-6 flex-grow bg-surface rounded-t-2xl -mt-4 relative z-10">
+        
+        {/* Location Card */}
+        <div className="bg-surface-container-lowest border border-outline-variant/50 rounded-lg p-4 shadow-[0_4px_20px_0_rgba(0,42,22,0.03)] flex gap-4 items-start">
+          <div className="p-2 bg-primary-container/10 rounded-full shrink-0 mt-1 flex items-center justify-center">
+            <span className="material-symbols-outlined text-[24px] text-primary">location_on</span>
+          </div>
+          <div className="flex-1">
+            <h3 className="font-label-caps text-[12px] text-on-surface-variant font-bold mb-1 uppercase tracking-wider">LOKASI TERDETEKSI</h3>
+            {locating ? (
+              <p className="font-body-md text-on-surface">Mencari lokasi akurat...</p>
+            ) : locationError ? (
+              <div>
+                <p className="text-error text-xs mb-2">{locationError}</p>
+                <button onClick={getLocation} className="bg-error-container text-error font-bold text-xs px-3 py-1 rounded-md">
+                  Coba Lagi
+                </button>
+              </div>
+            ) : location ? (
+              <div>
+                <p className="font-body-md text-on-surface font-semibold mb-0.5">Titik Koordinat Terkunci</p>
+                <p className="font-mono text-[11px] text-outline tracking-wider mt-1">
+                  LAT: {location.lat.toFixed(4)} - LNG: {location.lng.toFixed(4)}
+                </p>
+              </div>
+            ) : null}
+          </div>
+        </div>
+
+        {/* Category Dropdown */}
+        <div className="flex flex-col gap-1 z-20 relative">
+          <label className="font-label-caps text-[12px] text-on-surface-variant font-bold uppercase tracking-wider">KATEGORI INSIDEN</label>
+          <div 
+            className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-3 pl-4 pr-4 flex justify-between items-center cursor-pointer hover:border-primary transition-colors"
+            onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+          >
+            <span className={`font-body-lg text-base ${category ? 'text-on-surface' : 'text-on-surface-variant'}`}>
+              {category || 'Pilih kategori...'}
+            </span>
+            <span className="material-symbols-outlined text-[24px] text-outline">
+              {showCategoryDropdown ? 'expand_less' : 'expand_more'}
+            </span>
+          </div>
+          
+          {showCategoryDropdown && (
+            <div className="absolute top-full mt-1 left-0 w-full bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden shadow-sm z-30">
+              {CATEGORIES.map((cat, index) => (
+                <div 
+                  key={cat} 
+                  className={`px-4 py-3 flex justify-between items-center cursor-pointer hover:bg-surface-container-low transition-colors ${index < CATEGORIES.length - 1 ? 'border-b border-outline-variant/30' : ''}`}
+                  onClick={() => { setCategory(cat); setShowCategoryDropdown(false); }}
+                >
+                  <span className={`font-body-md ${category === cat ? 'text-primary font-bold' : 'text-on-surface'}`}>{cat}</span>
+                  {category === cat && <span className="material-symbols-outlined text-[18px] text-primary">check</span>}
+                </div>
+              ))}
             </div>
           )}
-
-          {/* Camera Input */}
-          <div>
-            <label className="block text-sm font-medium mb-2 text-on-surface">Foto Kejadian (Wajib)</label>
-            <div 
-              onClick={() => fileInputRef.current?.click()}
-              className={`w-full aspect-video rounded-2xl overflow-hidden border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all ${imagePreview ? 'border-primary bg-black' : 'border-outline-variant bg-surface-container hover:bg-surface-container-high'}`}
-            >
-              {imagePreview ? (
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
-              ) : (
-                <>
-                  <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-2">add_a_photo</span>
-                  <p className="font-medium text-on-surface-variant">Tap untuk Buka Kamera</p>
-                </>
-              )}
-            </div>
-            {/* HTML5 Camera API: capture="environment" forces back camera on mobile */}
-            <input 
-              type="file" 
-              accept="image/*" 
-              capture="environment" 
-              ref={fileInputRef}
-              onChange={handleImageCapture}
-              className="hidden"
-            />
-          </div>
-
-          {/* Location Status */}
-          <div className="bg-surface-container rounded-2xl p-4 flex items-start gap-4">
-            <div className={`p-2 rounded-full ${location ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
-              <span className="material-symbols-outlined">{location ? 'location_on' : locating ? 'my_location' : 'location_off'}</span>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-bold text-sm text-on-surface mb-1">
-                {location ? 'Lokasi Terdeteksi' : locating ? 'Mencari Lokasi GPS...' : 'Lokasi Belum Terdeteksi'}
-              </h3>
-              <p className="text-xs text-on-surface-variant">
-                {location 
-                  ? `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}` 
-                  : locationError || 'Mohon izinkan akses lokasi GPS Anda agar bantuan akurat.'}
-              </p>
-              {!location && !locating && (
-                <button type="button" onClick={getLocation} className="mt-2 text-xs font-bold text-primary px-3 py-1 bg-primary/10 rounded-full">
-                  Coba Ulang Lokasi
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Category */}
-          <div>
-            <label className="block text-sm font-medium mb-2 text-on-surface">Kategori Insiden</label>
-            <div className="relative">
-              <select 
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full pl-4 pr-10 py-4 bg-surface-container border border-outline-variant rounded-2xl appearance-none outline-none focus:ring-2 focus:ring-primary text-on-surface font-body-lg font-medium"
-              >
-                <option value="Bencana Alam">Bencana Alam</option>
-                <option value="Kriminalitas">Kriminalitas</option>
-                <option value="Kecelakaan">Kecelakaan</option>
-                <option value="Kedaruratan Medis">Kedaruratan Medis</option>
-                <option value="Infrastruktur Rusak">Infrastruktur Rusak</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
-              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium mb-2 text-on-surface">Detail Kejadian</label>
-            <textarea
-              required
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Ceritakan detail singkat apa yang terjadi..."
-              className="w-full p-4 bg-surface-container border border-outline-variant rounded-2xl outline-none focus:ring-2 focus:ring-primary text-on-surface resize-none font-body-lg"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading || !location || !imagePreview || !description}
-            className="w-full bg-error hover:bg-error/90 text-on-error py-4 rounded-2xl font-bold font-body-lg shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-          >
-            {loading ? (
-              <span className="w-6 h-6 border-2 border-on-error border-t-transparent rounded-full animate-spin"></span>
-            ) : (
-              <>
-                <span className="material-symbols-outlined">send</span>
-                KIRIM LAPORAN DARURAT
-              </>
-            )}
-          </button>
-        </form>
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 w-full max-w-md bg-surface-container-lowest border-t border-outline-variant pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <div className="flex justify-around items-center h-16">
-          <Link href="/warga/lapor" className="flex flex-col items-center justify-center w-full h-full text-primary">
-            <span className="material-symbols-outlined font-variation-fill">add_circle</span>
-            <span className="text-[10px] font-bold mt-1">Lapor</span>
-          </Link>
-          <Link href="/warga/riwayat" className="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-on-surface transition-colors">
-            <span className="material-symbols-outlined">history</span>
-            <span className="text-[10px] font-medium mt-1">Riwayat</span>
-          </Link>
         </div>
+
+        {/* Description Text Area */}
+        <div className="flex flex-col gap-1 flex-grow mb-6 z-10">
+          <label className="font-label-caps text-[12px] text-on-surface-variant font-bold uppercase tracking-wider">DESKRIPSI (OPSIONAL)</label>
+          <textarea 
+            className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-4 font-body-md text-on-surface text-base outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none"
+            style={{ minHeight: '120px' }}
+            placeholder="Jelaskan detail situasi..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+      </div>
+      
+      {/* Bottom Action Area */}
+      <div className="bg-surface border-t border-outline-variant/30 p-5 shadow-[0_-4px_20px_0_rgba(0,42,22,0.08)] fixed bottom-0 w-full max-w-md z-50 pb-8">
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className={`w-full bg-secondary-container py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98] ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-secondary-container/90'}`}
+        >
+          {loading ? (
+            <span className="w-5 h-5 border-2 border-on-secondary-container border-t-transparent rounded-full animate-spin"></span>
+          ) : (
+            <span className="material-symbols-outlined text-[20px] text-on-secondary-container">send</span>
+          )}
+          <span className="text-on-secondary-container font-bold text-[16px] tracking-wide uppercase">
+            {loading ? 'MENGIRIM...' : 'KIRIM LAPORAN'}
+          </span>
+        </button>
       </div>
     </div>
   );

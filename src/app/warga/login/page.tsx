@@ -3,100 +3,139 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function WargaLogin() {
   const router = useRouter();
-  const [phone, setPhone] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    setErrorMsg('');
+    
+    if (!identifier.trim()) {
+      setErrorMsg('Masukkan nomor HP atau NIK Anda.');
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const res = await fetch('/api/mobile/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'signIn', phone }),
+        body: JSON.stringify({ action: 'signIn', phone: identifier.trim() }),
       });
 
       const data = await res.json();
       
       if (!res.ok || data.error) {
-        setError(data.error || 'Login gagal.');
+        setErrorMsg(data.error || 'Nomor HP/NIK tidak ditemukan.');
       } else {
-        // Simpan sesi warga sederhana di localStorage
         localStorage.setItem('warga_session', JSON.stringify(data.user));
         router.push('/warga/lapor');
       }
     } catch (err) {
-      setError('Terjadi kesalahan koneksi jaringan.');
+      setErrorMsg('Terjadi kesalahan koneksi. Periksa internet Anda.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 bg-surface-container-lowest">
-      {/* Header Logo */}
-      <div className="mb-12 flex flex-col items-center">
-        <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center shadow-lg mb-4">
-          <span className="material-symbols-outlined text-primary text-5xl">shield_person</span>
-        </div>
-        <h1 className="text-3xl font-headline-md font-bold text-primary tracking-tight">SIGAP</h1>
-        <p className="text-on-surface-variant font-body-lg text-center mt-2 px-4">
-          Layanan Pelaporan Cepat Tanggap Warga & Babinsa
-        </p>
-      </div>
-
-      {/* Login Form */}
-      <form onSubmit={handleLogin} className="w-full space-y-6">
-        {error && (
-          <div className="bg-error-container text-on-error-container p-4 rounded-xl text-sm font-body-md shadow-sm border border-error/20">
-            {error}
-          </div>
-        )}
-
-        <div>
-          <label className="block text-sm font-medium text-on-surface-variant mb-2 ml-1">Nomor Handphone</label>
-          <div className="relative">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">phone_iphone</span>
-            <input
-              type="tel"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-surface-container border border-outline-variant rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-lg"
-              placeholder="Contoh: 081234567890"
-            />
-          </div>
+    <div className="flex-1 bg-background min-h-full flex flex-col justify-center p-5 items-center">
+      <div className="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/30 p-8 flex flex-col items-center">
+        
+        {/* Brand Logo */}
+        <div className="mb-8 flex flex-col items-center">
+          <img 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK" 
+            alt="SIGAP Logo"
+            className="w-24 h-24 rounded-full border border-outline-variant/20 mb-4 object-cover"
+          />
+          <h1 className="font-headline-lg-mobile text-2xl font-bold text-on-surface">Masuk ke SIGAP</h1>
+          <p className="font-body-md text-on-surface-variant mt-2 text-center">Platform Keamanan Terpadu. Integritas dan Kecepatan.</p>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading || !phone}
-          className="w-full bg-primary hover:bg-primary/90 text-on-primary py-4 rounded-2xl font-bold font-body-lg shadow-md disabled:opacity-70 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]"
-        >
-          {loading ? (
-            <span className="w-6 h-6 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
-          ) : (
-            <>
-              Masuk Sekarang
-              <span className="material-symbols-outlined">arrow_forward</span>
-            </>
-          )}
-        </button>
+        {errorMsg ? (
+          <p className="text-error font-body-md text-center w-full mb-4">{errorMsg}</p>
+        ) : null}
 
-        <div className="text-center pt-6">
-          <p className="text-on-surface-variant font-body-md mb-2">Belum punya akun pelapor?</p>
-          <Link href="/warga/register" className="text-primary font-bold font-body-lg hover:underline inline-flex items-center gap-1">
-            Daftar Disini
+        {/* Form */}
+        <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
+          {/* Input: Nomor HP/NIK */}
+          <div className="flex flex-col gap-2">
+            <label className="font-label-caps text-xs font-bold text-on-surface uppercase tracking-wider">Nomor HP/NIK</label>
+            <div className="relative justify-center flex flex-col">
+              <span className="material-symbols-outlined absolute left-3 z-10 text-on-surface-variant text-[20px]">person</span>
+              <input 
+                type="text"
+                className="w-full bg-background-pure border border-outline text-on-surface font-body-lg rounded-lg pl-10 pr-4 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                placeholder="Masukkan nomor HP atau NIK"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          {/* Input: Kata Sandi */}
+          <div className="flex flex-col gap-2">
+            <label className="font-label-caps text-xs font-bold text-on-surface uppercase tracking-wider">Kata Sandi</label>
+            <div className="relative justify-center flex flex-col">
+              <span className="material-symbols-outlined absolute left-3 z-10 text-on-surface-variant text-[20px]">lock</span>
+              <input 
+                type={showPassword ? "text" : "password"}
+                className="w-full bg-background-pure border border-outline text-on-surface font-body-lg rounded-lg pl-10 pr-10 py-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                placeholder="Masukkan kata sandi"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+              />
+              <button 
+                type="button"
+                className="absolute right-3 z-10 flex items-center justify-center text-on-surface-variant"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <span className="material-symbols-outlined text-[20px]">{showPassword ? "visibility" : "visibility_off"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Forgot Password */}
+          <div className="flex justify-end mt-1">
+            <button type="button" className="font-body-md text-primary font-semibold hover:underline">Lupa kata sandi?</button>
+          </div>
+
+          {/* Primary Action Button */}
+          <button 
+            type="submit"
+            disabled={isLoading}
+            className={`w-full bg-primary py-3 rounded-lg mt-4 flex items-center justify-center gap-2 transition-opacity ${isLoading ? 'opacity-50' : 'hover:bg-primary/90'}`}
+          >
+            {isLoading ? (
+              <span className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
+            ) : (
+              <>
+                <span className="text-on-primary font-button-text font-semibold text-base">Masuk</span>
+                <span className="material-symbols-outlined text-on-primary text-[20px]">arrow_forward</span>
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Secondary Action */}
+        <div className="mt-8 flex items-center justify-center">
+          <span className="font-body-md text-on-surface-variant">Belum punya akun? </span>
+          <Link href="/warga/register" className="text-primary font-semibold ml-1 hover:underline">
+            Daftar
           </Link>
         </div>
-      </form>
+
+      </div>
     </div>
   );
 }
