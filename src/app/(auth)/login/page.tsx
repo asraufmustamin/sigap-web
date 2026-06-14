@@ -35,144 +35,136 @@ export default function LoginPage() {
       if (!res.ok) {
         toast.error('Login gagal', { description: data.error || 'Terjadi kesalahan' });
       } else {
-        // Simpan sesi ke localStorage/cookie
         localStorage.setItem('user_session', JSON.stringify(data.user));
         toast.success('Login berhasil');
         router.push('/');
       }
     } catch (err: any) {
-      toast.error('Terjadi kesalahan yang tidak terduga', { description: err.message });
+      toast.error('Terjadi kesalahan', { description: 'Gagal terhubung ke server.' });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-surface-container-low min-h-screen flex items-center justify-center font-body-md text-on-surface subtle-pattern relative overflow-hidden">
-      {/* Ambient decorative elements */}
+    <div className="bg-surface-container-low min-h-screen flex items-center justify-center font-body-md p-4 relative overflow-hidden">
+      
+      {/* Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-fixed-dim/20 blur-[120px]"></div>
         <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-secondary-fixed/20 blur-[120px]"></div>
       </div>
 
-      {/* Login Container */}
-      <main className="relative z-10 w-full max-w-md px-margin-mobile md:px-0">
-        <div className="glass-panel rounded-xl shadow-lg border border-surface-variant overflow-hidden flex flex-col items-center pt-stack-lg pb-stack-lg px-stack-lg md:px-[2.5rem]">
+      <main className="relative z-10 w-full max-w-[400px]">
+        <div className="bg-surface-container-lowest rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-outline-variant/30 px-6 py-10 flex flex-col items-center overflow-hidden">
           
-          {/* Brand Header */}
-          <div className="flex flex-col items-center mb-stack-lg">
+          {/* Top Accent Line */}
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
+
+          {/* Header */}
+          <div className="flex flex-col items-center mb-6">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK"
-              alt="SIGAP Logo"
-              className="w-24 h-24 rounded-full border border-outline-variant/20 mb-4 object-cover"
+              alt="SIGAP"
+              className="w-20 h-20 rounded-full border border-outline-variant/20 shadow-sm mb-4 object-cover"
             />
-            <h1 className="font-headline-lg-mobile text-2xl font-bold text-on-surface mb-2">Masuk ke SIGAP</h1>
-            <p className="font-body-md text-on-surface-variant text-center px-4">
-              Platform Keamanan Terpadu. Integritas dan Kecepatan.
+            <h1 className="font-headline-md text-2xl font-bold text-primary tracking-tight">Portal Petugas</h1>
+            <p className="font-body-md text-on-surface-variant text-sm mt-1.5 text-center px-4">
+              Akses aman menuju Command Center SIGAP.
             </p>
           </div>
 
-          {/* Login Form */}
-          <form onSubmit={handleLogin} className="w-full space-y-stack-md">
+          {/* Form */}
+          <form onSubmit={handleLogin} className="w-full flex flex-col gap-3.5">
             
-            {/* Username Field */}
-            <div className="flex flex-col space-y-2">
-              <label htmlFor="email" className="font-label-caps text-xs font-bold text-on-surface uppercase tracking-wider">
-                ID PERSONIL / NOMOR HP
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="email" className="font-label-caps text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">
+                ID Personil / Email
               </label>
-              <div className="relative flex items-center bg-surface-container-lowest rounded-lg border border-outline transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
-                <span className="material-symbols-outlined absolute left-3 text-on-surface-variant opacity-70">person</span>
+              <div className="relative flex items-center">
+                <span className="material-symbols-outlined absolute left-3.5 text-outline text-[20px] z-10">person</span>
                 <input
                   type="text"
                   id="email"
-                  name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  placeholder="Masukkan nomor HP atau ID"
-                  className="w-full pl-10 pr-4 py-3 bg-transparent border-none focus:ring-0 font-body-md text-on-surface placeholder-outline outline-none rounded-lg"
+                  placeholder="Masukkan ID Personil"
+                  className="w-full bg-surface border border-outline-variant/60 text-on-surface font-body-md rounded-xl pl-11 pr-4 py-3.5 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
                 />
               </div>
             </div>
 
-            {/* Password Field */}
-            <div className="flex flex-col space-y-2">
-              <label htmlFor="password" className="font-label-caps text-xs font-bold text-on-surface uppercase tracking-wider">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="password" className="font-label-caps text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1">
                 Kata Sandi
               </label>
-              <div className="relative flex items-center bg-surface-container-lowest rounded-lg border border-outline transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
-                <span className="material-symbols-outlined absolute left-3 text-on-surface-variant opacity-70">lock</span>
+              <div className="relative flex items-center">
+                <span className="material-symbols-outlined absolute left-3.5 text-outline text-[20px] z-10">lock</span>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  placeholder="Masukkan kata sandi"
-                  className="w-full pl-10 pr-10 py-3 bg-transparent border-none focus:ring-0 font-body-md text-on-surface placeholder-outline outline-none rounded-lg"
+                  placeholder="Masukkan kata sandi rahasia"
+                  className="w-full bg-surface border border-outline-variant/60 text-on-surface font-body-md rounded-xl pl-11 pr-11 py-3.5 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity"
-                  aria-label="Toggle password visibility"
+                  className="absolute right-3.5 text-outline hover:text-primary transition-colors z-10"
                 >
-                  <span className="material-symbols-outlined">
+                  <span className="material-symbols-outlined text-[20px]">
                     {showPassword ? 'visibility' : 'visibility_off'}
                   </span>
                 </button>
               </div>
             </div>
 
-            {/* Options */}
-            <div className="flex items-center justify-between pt-2">
-              <label className="flex items-center space-x-2 cursor-pointer group">
+            <div className="flex items-center justify-between mt-1 px-1">
+              <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="checkbox"
-                  className="rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-0 w-4 h-4 bg-surface-container-lowest group-hover:border-primary transition-colors"
+                  className="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 bg-surface"
                 />
-                <span className="font-body-md text-body-md text-on-surface-variant group-hover:text-on-surface transition-colors">
-                  Ingat Sesi
+                <span className="font-body-sm text-[13px] text-on-surface-variant group-hover:text-on-surface transition-colors">
+                  Ingat saya
                 </span>
               </label>
-              <a href="#" className="font-body-md text-body-md text-primary font-medium hover:text-primary-container transition-colors">
+              <button type="button" className="font-body-sm text-[13px] text-primary font-semibold hover:underline">
                 Lupa Sandi?
-              </a>
-            </div>
-
-            {/* Submit Button */}
-            <div className="pt-stack-sm">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 px-6 bg-primary text-on-primary rounded font-button-text text-button-text hover:bg-primary-container transition-colors flex items-center justify-center space-x-2 group shadow-sm hover:shadow-md disabled:opacity-50"
-              >
-                <span>{loading ? 'MEMVERIFIKASI...' : 'MASUK SISTEM'}</span>
-                {!loading && (
-                  <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">
-                    arrow_forward
-                  </span>
-                )}
               </button>
             </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full bg-primary py-3.5 rounded-xl mt-4 flex items-center justify-center gap-2 shadow-md transition-all ${loading ? 'opacity-70' : 'hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]'}`}
+            >
+              {loading ? (
+                <span className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
+              ) : (
+                <span className="text-on-primary font-button-text font-bold text-sm tracking-wide">MASUK COMMAND CENTER</span>
+              )}
+            </button>
           </form>
 
-          {/* Security Notice Footer */}
-          <div className="mt-stack-lg pt-stack-md border-t border-outline-variant w-full text-center flex flex-col items-center justify-center opacity-80">
-            <span className="material-symbols-outlined text-error mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>
-              warning
-            </span>
-            <p className="font-label-caps text-label-caps text-error tracking-wider uppercase max-w-[200px] leading-relaxed">
-              Akses Terbatas: Hanya untuk Personil Berwenang
-            </p>
+          {/* Security Banner */}
+          <div className="mt-8 w-full bg-error-container/40 rounded-xl py-3 px-4 flex items-center gap-3 border border-error/10">
+            <span className="material-symbols-outlined text-error text-[20px]">gpp_bad</span>
+            <div className="flex flex-col">
+              <span className="font-label-caps text-[10px] text-error font-bold uppercase tracking-wider">Akses Terbatas</span>
+              <span className="font-body-sm text-[11px] text-error/80 leading-tight">Hanya untuk personil berwenang.</span>
+            </div>
           </div>
-        </div>
 
-        {/* Versioning/System Info */}
-        <div className="text-center mt-stack-md opacity-60">
-          <p className="font-label-caps text-[10px] text-on-surface-variant tracking-wider uppercase">
-            SIGAP Core v2.4.1 • Sambungan Terenkripsi
+        </div>
+        
+        {/* Footer */}
+        <div className="text-center mt-6">
+          <p className="font-label-caps text-[10px] text-on-surface-variant tracking-wider uppercase opacity-80">
+            SIGAP v2.4 • Koneksi Terenkripsi AES-256
           </p>
         </div>
       </main>
