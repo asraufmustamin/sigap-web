@@ -57,76 +57,94 @@ export default function WargaRegister() {
   };
 
   return (
-    <div className="flex-1 bg-[#f0f4f9] min-h-screen flex flex-col justify-center items-center p-4 font-body-md">
+    <div className="flex-1 bg-[#f0f4f9] min-h-screen flex flex-col justify-center items-center p-4 sm:p-8 font-body-md">
       
-      <div className="w-full max-w-[450px] bg-white rounded-[32px] flex flex-col overflow-hidden p-6 md:p-8 shadow-sm">
+      <div className="w-full max-w-[1040px] bg-white rounded-[28px] flex flex-col md:flex-row overflow-hidden min-h-[500px] p-8 sm:p-10 shadow-sm border border-gray-100">
         
-        {/* Branding */}
-        <div className="flex flex-col mb-6">
+        {/* Left Column: Branding */}
+        <div className="flex-1 flex flex-col md:pr-12 mb-10 md:mb-0">
           <img 
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK" 
             alt="SIGAP Logo"
-            className="w-12 h-12 rounded-full border border-gray-100 mb-4 object-cover"
+            className="w-14 h-14 rounded-full border border-gray-100 mb-6 object-cover"
           />
-          <h1 className="text-2xl text-[#1f1f1f] tracking-tight mb-2" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>Buat Akun</h1>
-          <p className="text-sm text-[#444746]">
-            Daftarkan identitas Anda untuk akses ke platform pelaporan insiden SIGAP.
+          <h1 className="text-3xl md:text-4xl text-[#1f1f1f] tracking-tight mb-4 font-medium" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>Buat Akun</h1>
+          <p className="text-base text-[#444746] mb-8 leading-relaxed">
+            Daftarkan identitas Anda untuk mendapatkan akses ke layanan pelaporan keamanan SIGAP.
           </p>
+
+          <div className="hidden md:block mt-auto text-sm text-[#444746] leading-relaxed max-w-[350px]">
+            Sistem Informasi Keamanan dan Pelaporan dirancang untuk memberikan respons cepat terhadap kejadian di lingkungan Anda.
+          </div>
         </div>
 
-        {/* Form */}
-        <div className="w-full flex flex-col pt-2">
+        {/* Right Column: Form */}
+        <div className="flex-1 w-full max-w-[450px] md:max-w-none md:ml-auto flex flex-col justify-between pt-2">
           
-          <form onSubmit={handleRegister} className="flex flex-col w-full">
+          <form onSubmit={handleRegister} className="flex flex-col w-full h-full">
             
             {errorMsg ? (
-              <div className="flex items-center gap-2 mb-6 text-[#d93025]">
-                <span className="material-symbols-outlined text-[20px]">error</span>
-                <span className="text-sm">{errorMsg}</span>
+              <div className="flex items-center gap-2 mb-6 p-3 bg-red-50 text-[#d93025] rounded-xl border border-red-100 text-sm">
+                <span className="material-symbols-outlined text-[18px]">error</span>
+                <span>{errorMsg}</span>
               </div>
             ) : null}
 
-            {/* Name Input */}
-            <div className="mb-4 relative">
-              <input
-                type="text"
-                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] transition-colors"
-                placeholder=" "
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={isLoading}
-              />
-              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
-                Nama Lengkap Sesuai KTP
-              </label>
-            </div>
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+              {/* Name Input */}
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  id="name"
+                  className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
+                  placeholder=" "
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isLoading}
+                />
+                <label
+                  htmlFor="name"
+                  className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none"
+                >
+                  Nama Lengkap Sesuai KTP
+                </label>
+              </div>
 
-            {/* NIK Input */}
-            <div className="mb-4 relative">
-              <input
-                type="text"
-                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] transition-colors"
-                placeholder=" "
-                value={nik}
-                onChange={(e) => setNik(e.target.value.replace(/[^0-9]/g, '').substring(0, 16))}
-                disabled={isLoading}
-              />
-              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
-                Nomor Induk Kependudukan (NIK)
-              </label>
+              {/* NIK Input */}
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  id="nik"
+                  className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
+                  placeholder=" "
+                  value={nik}
+                  onChange={(e) => setNik(e.target.value.replace(/[^0-9]/g, '').substring(0, 16))}
+                  disabled={isLoading}
+                />
+                <label
+                  htmlFor="nik"
+                  className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none"
+                >
+                  Nomor Induk Kependudukan
+                </label>
+              </div>
             </div>
 
             {/* Phone Input */}
             <div className="mb-4 relative">
               <input
                 type="tel"
-                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] transition-colors"
+                id="phone"
+                className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
                 placeholder=" "
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 disabled={isLoading}
               />
-              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
+              <label
+                htmlFor="phone"
+                className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none"
+              >
                 Nomor Handphone Aktif
               </label>
             </div>
@@ -135,34 +153,43 @@ export default function WargaRegister() {
             <div className="mb-2 relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] transition-colors"
+                id="password"
+                className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
                 placeholder=" "
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
               />
-              <label className="absolute left-4 top-[18px] text-[#444746] text-base pointer-events-none transition-all peer-focus:text-[12px] peer-focus:top-[8px] peer-focus:text-[#0b57d0] peer-[:not(:placeholder-shown)]:text-[12px] peer-[:not(:placeholder-shown)]:top-[8px]">
+              <label
+                htmlFor="password"
+                className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none"
+              >
                 Buat Kata Sandi Baru
               </label>
             </div>
 
-            <div className="flex items-center gap-2 mb-8 mt-2 cursor-pointer w-fit group" onClick={() => setShowPassword(!showPassword)}>
-              <div className={`w-4 h-4 rounded-[2px] border ${showPassword ? 'bg-[#0b57d0] border-[#0b57d0]' : 'border-[#444746]'} flex items-center justify-center transition-colors`}>
-                {showPassword && <span className="material-symbols-outlined text-white text-[14px]">check</span>}
-              </div>
-              <span className="text-sm text-[#1f1f1f] group-hover:text-[#0b57d0] transition-colors">Tampilkan sandi</span>
+            <div className="flex items-center gap-2 mb-6 mt-2 cursor-pointer w-fit group">
+              <input 
+                type="checkbox" 
+                id="show-password"
+                className="w-4 h-4 rounded-[2px] border-[#747775] text-[#0b57d0] focus:ring-[#0b57d0] cursor-pointer"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+                disabled={isLoading}
+              />
+              <label htmlFor="show-password" className="text-sm text-[#1f1f1f] cursor-pointer select-none">Tampilkan sandi</label>
             </div>
 
             <p className="text-sm text-[#444746] mb-8 leading-relaxed">
-              Dengan membuat akun, Anda menyetujui <a href="#" className="text-[#0b57d0] hover:underline">Persyaratan Layanan</a> dan <a href="#" className="text-[#0b57d0] hover:underline">Kebijakan Privasi</a> SIGAP.
+              Dengan membuat akun, Anda menyetujui <a href="#" className="text-[#0b57d0] hover:underline font-medium">Persyaratan Layanan</a> dan <a href="#" className="text-[#0b57d0] hover:underline font-medium">Kebijakan Privasi</a> SIGAP.
             </p>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
               <Link 
                 href="/warga/login" 
-                className="text-[#0b57d0] font-medium text-sm px-4 py-2.5 rounded-full hover:bg-blue-50 transition-colors text-center"
+                className="text-[#0b57d0] font-medium text-sm hover:bg-blue-50 px-3 py-2 rounded-full -ml-3 transition-colors text-left"
               >
-                Sudah punya akun?
+                Masuk saja
               </Link>
               <button 
                 type="submit"
@@ -181,7 +208,7 @@ export default function WargaRegister() {
         </div>
       </div>
 
-      <div className="w-full max-w-[450px] flex justify-between items-center mt-4 px-2 text-xs text-[#444746]">
+      <div className="w-full max-w-[1040px] flex justify-between items-center mt-6 px-2 text-xs text-[#444746]">
         <div>
           <span className="cursor-pointer hover:bg-gray-200 px-2 py-1 rounded">Indonesia <span className="material-symbols-outlined text-[12px] align-middle ml-1">arrow_drop_down</span></span>
         </div>
