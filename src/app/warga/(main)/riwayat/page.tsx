@@ -130,29 +130,18 @@ export default function WargaRiwayat() {
         </div>
 
         {/* Filter & Search */}
-        <div className="bg-surface rounded-3xl shadow-sm border border-border p-4 sm:p-6 flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center transition-colors">
-          <div className="relative w-full lg:max-w-md">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">search</span>
-            <input
-              type="text"
-              className="w-full pl-12 pr-4 py-3 bg-background border border-border rounded-2xl text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-              placeholder="Cari ID atau Kategori..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0 w-full lg:w-auto hide-scrollbar">
+        <div className="bg-surface rounded-3xl shadow-sm border border-border p-4 flex flex-col lg:flex-row gap-4 justify-between items-center transition-colors">
+          <div className="flex gap-2 overflow-x-auto w-full lg:w-auto hide-scrollbar pb-2 lg:pb-0">
             {FILTERS.map((filter) => {
               const isActive = activeFilter === filter;
               return (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-6 py-2.5 rounded-full whitespace-nowrap transition-all font-semibold text-sm border-2 ${
+                  className={`px-5 py-2 rounded-xl whitespace-nowrap transition-all font-bold text-sm ${
                     isActive 
-                      ? 'bg-primary border-primary text-on-primary shadow-lg shadow-primary/25' 
-                      : 'bg-transparent text-text-muted border-border hover:border-text-muted/30 hover:text-text-main'
+                      ? 'bg-primary text-on-primary shadow-md shadow-primary/20 scale-105' 
+                      : 'bg-surface-hover text-text-muted hover:text-text-main hover:bg-border'
                   }`}
                 >
                   {filter}
@@ -160,79 +149,86 @@ export default function WargaRiwayat() {
               );
             })}
           </div>
+
+          <div className="relative w-full lg:max-w-xs">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
+            <input
+              type="text"
+              className="w-full pl-11 pr-4 py-2.5 bg-background border border-border rounded-xl text-text-main text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              placeholder="Cari ID, Kategori..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* Reports List */}
         {isLoading ? (
-          <div className="flex flex-col gap-4">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="h-32 bg-surface-hover rounded-3xl border border-border animate-pulse"></div>
+          <div className="flex flex-col gap-3">
+            {[1, 2, 3, 4].map((n) => (
+              <div key={n} className="h-24 bg-surface-hover rounded-2xl border border-border animate-pulse"></div>
             ))}
           </div>
         ) : filteredReports.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-3xl border border-dashed border-border transition-colors">
-            <div className="w-20 h-20 bg-surface-hover rounded-full flex items-center justify-center mb-6">
-              <span className="material-symbols-outlined text-[40px] text-text-muted">assignment_late</span>
+            <div className="w-16 h-16 bg-surface-hover rounded-full flex items-center justify-center mb-4">
+              <span className="material-symbols-outlined text-[32px] text-text-muted">assignment_late</span>
             </div>
-            <h3 className="text-xl font-bold text-text-main mb-2">Tidak ada laporan ditemukan</h3>
-            <p className="text-text-muted max-w-sm text-center">Coba ubah kata kunci pencarian atau buat laporan baru.</p>
+            <h3 className="text-lg font-bold text-text-main mb-2">Tidak ada laporan ditemukan</h3>
+            <p className="text-text-muted text-sm text-center">Coba ubah kata kunci pencarian atau buat laporan baru.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             {filteredReports.map((item) => {
               const status = getStatusConfig(item.status);
               const iconName = getCategoryIcon(item.category);
 
               return (
-                <div key={item.id} className="bg-surface border border-border rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all flex relative group cursor-pointer">
-                  {/* Status Indicator Bar */}
-                  <div className={`w-2 h-full absolute left-0 top-0 z-10 ${status.bar}`}></div>
+                <div key={item.id} className="group bg-surface border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex relative cursor-pointer hover:border-primary/30">
+                  {/* Status Indicator Line */}
+                  <div className={`w-1.5 h-full absolute left-0 top-0 z-10 ${status.bar}`}></div>
                   
-                  <div className="flex-1 p-5 flex flex-col sm:flex-row gap-5 pl-7">
+                  <div className="flex-1 p-4 pl-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     
-                    {/* Image / Icon */}
-                    <div className="w-full sm:w-32 h-40 sm:h-32 rounded-2xl overflow-hidden shrink-0 bg-surface-hover flex items-center justify-center border border-border relative">
+                    {/* Thumbnail */}
+                    <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-hover flex items-center justify-center border border-border relative group-hover:scale-105 transition-transform duration-300">
                       {item.image_url ? (
-                         <img src={item.image_url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Thumb" />
+                         <img src={item.image_url} className="w-full h-full object-cover" alt="Thumb" />
                       ) : (
-                         <span className="material-symbols-outlined text-[40px] text-text-muted">{iconName}</span>
+                         <span className="material-symbols-outlined text-[28px] text-text-muted">{iconName}</span>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:hidden"></div>
                     </div>
                     
-                    {/* Details */}
-                    <div className="flex flex-col justify-between flex-1 min-w-0 py-1">
-                      <div>
-                        <div className="flex justify-between items-start mb-3">
-                           <div className="flex items-center gap-2">
-                             <span className="text-xs font-mono font-semibold text-text-muted bg-surface-hover px-2.5 py-1 rounded-lg border border-border">
-                               #{String(item.id).substring(0,8).toUpperCase()}
-                             </span>
-                           </div>
-                           <div className={`px-3 py-1 rounded-full border flex items-center gap-1.5 ${status.bg} ${status.border}`}>
-                             <span className={`material-symbols-outlined text-[14px] ${status.color}`}>{status.icon}</span>
-                             <span className={`text-[11px] font-bold uppercase tracking-wider ${status.color}`}>{status.text}</span>
-                           </div>
-                        </div>
-                        
-                        <h3 className="font-bold text-text-main text-xl leading-tight line-clamp-1 mb-2">
-                          {item.category}
-                        </h3>
-                        <p className="text-base text-text-muted line-clamp-2 leading-relaxed">
-                          {item.description || 'Tidak ada deskripsi rinci.'}
-                        </p>
+                    {/* Main Details */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                         <span className="text-[10px] font-mono font-bold text-text-muted bg-surface-hover px-2 py-0.5 rounded border border-border">
+                           #{String(item.id).substring(0,8).toUpperCase()}
+                         </span>
+                         <span className="text-xs font-bold text-text-muted">•</span>
+                         <span className="text-xs text-text-muted font-medium">{getTimeAgo(item.created_at)}</span>
                       </div>
                       
-                      <div className="flex items-center justify-between mt-4 border-t border-border pt-4">
-                        <div className="flex items-center gap-2 text-text-muted text-sm font-medium">
-                          <span className="material-symbols-outlined text-[18px]">schedule</span>
-                          <span>{getTimeAgo(item.created_at)}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-primary text-sm font-semibold opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
-                          Lihat Detail <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                        </div>
-                      </div>
+                      <h3 className="font-bold text-text-main text-base leading-tight truncate mb-1 group-hover:text-primary transition-colors">
+                        {item.category}
+                      </h3>
+                      <p className="text-sm text-text-muted truncate">
+                        {item.description || 'Tidak ada deskripsi rinci.'}
+                      </p>
                     </div>
+                    
+                    {/* Status & Action */}
+                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center w-full sm:w-auto gap-3 mt-2 sm:mt-0">
+                       <div className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 ${status.bg} border ${status.border}`}>
+                         <span className={`material-symbols-outlined text-[16px] ${status.color}`}>{status.icon}</span>
+                         <span className={`text-xs font-bold uppercase tracking-wide ${status.color}`}>{status.text}</span>
+                       </div>
+                       
+                       <div className="flex items-center gap-1 text-primary text-xs font-bold opacity-0 sm:-translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                         Detail <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                       </div>
+                    </div>
+                    
                   </div>
                 </div>
               );

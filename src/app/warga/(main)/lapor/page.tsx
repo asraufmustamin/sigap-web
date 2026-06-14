@@ -129,45 +129,78 @@ export default function WargaLapor() {
             <h1 className="text-2xl font-bold text-text-main">Lapor Insiden</h1>
           </div>
           
-          <div className="flex items-center justify-between relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-border rounded-full z-0"></div>
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary rounded-full z-0 transition-all duration-500" style={{ width: `${((step - 1) / 2) * 100}%` }}></div>
+          <div className="flex items-center justify-between relative mt-4">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1.5 bg-border rounded-full z-0 overflow-hidden">
+              <div 
+                className="h-full bg-primary rounded-full transition-all duration-700 ease-in-out relative overflow-hidden" 
+                style={{ width: `${((step - 1) / 2) * 100}%` }}
+              >
+                <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite] -skew-x-12 translate-x-[-100%]"></div>
+              </div>
+            </div>
             
             {[1, 2, 3].map((num) => (
-              <div key={num} className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${step >= num ? 'bg-primary text-on-primary shadow-lg shadow-primary/30' : 'bg-surface border-2 border-border text-text-muted'}`}>
-                {step > num ? <span className="material-symbols-outlined text-[20px]">check</span> : num}
+              <div 
+                key={num} 
+                className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center font-bold text-base transition-all duration-500 border-4 ${
+                  step >= num 
+                    ? 'bg-primary border-primary text-on-primary shadow-[0_0_20px_rgba(var(--color-primary),0.4)] scale-110' 
+                    : 'bg-surface border-border text-text-muted hover:border-primary/30'
+                }`}
+              >
+                {step > num ? <span className="material-symbols-outlined text-[24px] animate-in zoom-in">check</span> : num}
               </div>
             ))}
           </div>
         </div>
 
         {/* Wizard Content */}
-        <div className="bg-surface rounded-3xl shadow-sm border border-border p-6 sm:p-8 min-h-[450px] flex flex-col relative overflow-hidden transition-colors">
+        <div className="bg-surface rounded-[2rem] shadow-xl border border-border p-6 sm:p-10 min-h-[500px] flex flex-col relative overflow-hidden transition-all duration-500">
           
           {/* STEP 1: Category & Description */}
           {step === 1 && (
-            <div className="flex flex-col flex-1 animate-in fade-in slide-in-from-right-4 duration-500">
-              <h2 className="text-xl font-bold text-text-main mb-6">Pilih Kategori Insiden</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-                {CATEGORIES.map((cat) => (
+            <div className="flex flex-col flex-1 animate-in fade-in slide-in-from-right-8 duration-700">
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-text-main">Pilih Kategori Insiden</h2>
+                <p className="text-text-muted mt-1">Pilih kategori yang paling sesuai dengan kejadian.</p>
+              </div>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+                {CATEGORIES.map((cat, idx) => (
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.name)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all gap-2 ${category === cat.name ? 'border-primary bg-primary/5 text-primary' : 'border-border bg-surface hover:border-primary/30 text-text-muted hover:text-text-main'}`}
+                    className={`group relative flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 gap-3 overflow-hidden ${
+                      category === cat.name 
+                        ? 'border-primary bg-primary/5 text-primary shadow-md scale-[1.02]' 
+                        : 'border-border bg-surface hover:border-primary/40 hover:bg-surface-hover text-text-muted hover:text-text-main hover:-translate-y-1 hover:shadow-sm'
+                    }`}
+                    style={{ animationDelay: `${idx * 50}ms` }}
                   >
-                    <span className="material-symbols-outlined text-[32px]">{cat.icon}</span>
-                    <span className="text-xs font-semibold text-center">{cat.name}</span>
+                    {category === cat.name && (
+                      <div className="absolute inset-0 bg-primary/5 animate-pulse"></div>
+                    )}
+                    <span className={`material-symbols-outlined text-[40px] transition-transform duration-300 ${category === cat.name ? 'scale-110' : 'group-hover:scale-110'}`}>
+                      {cat.icon}
+                    </span>
+                    <span className="text-sm font-bold text-center z-10">{cat.name}</span>
+                    
+                    {category === cat.name && (
+                      <span className="absolute top-3 right-3 material-symbols-outlined text-primary text-[20px] animate-in zoom-in">check_circle</span>
+                    )}
                   </button>
                 ))}
               </div>
 
-              <h2 className="text-lg font-bold text-text-main mb-3">Deskripsi <span className="text-text-muted font-normal text-sm">(Opsional)</span></h2>
-              <textarea 
-                className="w-full flex-1 bg-background border border-border rounded-xl px-4 py-3 text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none transition-colors"
-                placeholder="Jelaskan detail kejadian secara singkat..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+              <div className="mt-auto">
+                <h2 className="text-lg font-bold text-text-main mb-3">Deskripsi <span className="text-text-muted font-normal text-sm ml-1">(Opsional)</span></h2>
+                <textarea 
+                  className="w-full h-32 bg-background border-2 border-border rounded-2xl px-5 py-4 text-text-main outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none transition-all duration-300"
+                  placeholder="Jelaskan detail kejadian secara singkat untuk membantu proses verifikasi..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
             </div>
           )}
 
@@ -221,31 +254,36 @@ export default function WargaLapor() {
 
           {/* STEP 3: Photo Upload */}
           {step === 3 && (
-            <div className="flex flex-col flex-1 animate-in fade-in slide-in-from-right-4 duration-500">
-              <h2 className="text-xl font-bold text-text-main mb-2">Unggah Bukti Foto</h2>
-              <p className="text-text-muted text-sm mb-6">Foto kejadian sangat membantu tim pusat komando untuk memberikan respons yang tepat.</p>
+            <div className="flex flex-col flex-1 animate-in fade-in slide-in-from-right-8 duration-700">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-text-main">Unggah Bukti Foto</h2>
+                <p className="text-text-muted mt-1">Foto kejadian sangat membantu tim pusat komando untuk memberikan respons yang tepat.</p>
+              </div>
 
               <div 
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl bg-background hover:bg-surface-hover hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden min-h-[250px]"
+                className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-[2rem] bg-background hover:bg-primary/5 hover:border-primary/50 transition-all duration-300 cursor-pointer group relative overflow-hidden min-h-[300px]"
               >
                 {imagePreview ? (
-                  <div className="absolute inset-0 p-2">
-                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover rounded-2xl shadow-sm" />
-                    <div className="absolute inset-2 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                      <span className="material-symbols-outlined text-white text-[40px]">sync</span>
-                      <span className="text-white font-semibold">Ganti Foto</span>
+                  <div className="absolute inset-0 p-3">
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover rounded-3xl shadow-md" />
+                    <div className="absolute inset-3 rounded-3xl bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-3 backdrop-blur-sm scale-95 group-hover:scale-100">
+                      <span className="material-symbols-outlined text-white text-[48px] animate-spin-slow">sync</span>
+                      <span className="text-white font-bold tracking-wide">Klik untuk Ganti Foto</span>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center text-center p-6">
-                    <div className="w-20 h-20 bg-surface rounded-full shadow-sm border border-border flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <span className="material-symbols-outlined text-[36px] text-primary">add_photo_alternate</span>
+                  <div className="flex flex-col items-center text-center p-8">
+                    <div className="w-24 h-24 bg-surface rounded-full shadow-sm border border-border flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-500">
+                      <span className="material-symbols-outlined text-[48px] text-primary">add_photo_alternate</span>
                     </div>
-                    <h3 className="text-lg font-bold text-text-main">Tarik & Lepas Foto</h3>
-                    <p className="text-sm text-text-muted mt-1">atau klik untuk menelusuri file Anda</p>
+                    <h3 className="text-xl font-bold text-text-main">Tarik & Lepas Foto</h3>
+                    <p className="text-base text-text-muted mt-2">atau klik untuk menelusuri file dari perangkat Anda</p>
+                    <div className="mt-6 px-6 py-2 rounded-full bg-surface-hover text-text-main text-sm font-semibold group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                      Pilih Foto
+                    </div>
                   </div>
                 )}
                 <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageCapture} className="hidden" />
