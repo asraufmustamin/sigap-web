@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import BottomNav from '../../components/BottomNav';
+import BottomNav from '@/components/BottomNav';
 
 const FILTERS = ['Semua', 'Pending', 'Diproses', 'Selesai'];
 

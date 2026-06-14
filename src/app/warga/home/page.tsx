@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import BottomNav from '../../components/BottomNav'; // We will create this
+import BottomNav from '@/components/BottomNav'; // We will create this
 
 export default function WargaHome() {
   const router = useRouter();
