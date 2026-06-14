@@ -9,7 +9,15 @@ export async function POST(request: Request) {
     if (action === 'signIn') {
       const [rows]: any = await db.execute('SELECT * FROM users WHERE phone = ? OR nik_hash = ?', [phone, phone]);
       if (rows.length > 0) {
-        return NextResponse.json({ user: rows[0] });
+        const user = rows[0];
+        const response = NextResponse.json({ user });
+        response.cookies.set('warga_token', JSON.stringify(user), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/'
+        });
+        return response;
       }
       return NextResponse.json({ error: 'Nomor HP/NIK tidak ditemukan. Silakan daftar.' }, { status: 404 });
     }

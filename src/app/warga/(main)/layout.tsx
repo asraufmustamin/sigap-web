@@ -2,17 +2,19 @@ import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
+import WargaTopNav from "@/components/WargaTopNav";
+
 export default function WargaLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`min-h-screen bg-inverse-surface flex justify-center ${inter.className}`}>
-      {/* Container ini akan mensimulasikan layar HP (max-width: 480px) pada desktop */}
-      <div className="w-full max-w-md bg-surface min-h-screen shadow-2xl relative overflow-x-hidden flex flex-col">
+    <div className={`min-h-screen bg-[#f0f4f9] flex flex-col ${inter.className}`}>
+      <WargaTopNav />
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
-      </div>
+      </main>
     </div>
   );
 }

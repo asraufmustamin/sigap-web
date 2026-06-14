@@ -1,8 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+
+function SuccessMessage() {
+  const searchParams = useSearchParams();
+  if (searchParams.get('registered') === 'true') {
+    return (
+      <div className="flex items-center gap-2 mb-6 p-3 bg-green-50 text-green-700 rounded-xl border border-green-100 text-sm">
+        <span className="material-symbols-outlined text-[18px]">check_circle</span>
+        <span>Pendaftaran berhasil! Silakan masuk dengan akun Anda.</span>
+      </div>
+    );
+  }
+  return null;
+}
 
 export default function WargaLogin() {
   const router = useRouter();
@@ -74,6 +87,10 @@ export default function WargaLogin() {
                 <span>{errorMsg}</span>
               </div>
             ) : null}
+
+            <Suspense fallback={null}>
+              <SuccessMessage />
+            </Suspense>
 
             {/* Identifier Input */}
             <div className="mb-6 relative">

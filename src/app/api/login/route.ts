@@ -11,21 +11,37 @@ export async function POST(request: Request) {
 
     // Untuk mock sementara: bypass login jika admin/admin123
     if (email === 'admin' && password === 'admin123') {
-      return NextResponse.json({
+      const user = { id: 'admin', role: 'admin', name: 'Pusat Komando' };
+      const response = NextResponse.json({
         message: 'Login sukses',
-        user: { id: 'admin', role: 'admin', name: 'Pusat Komando' }
+        user
       });
+      response.cookies.set('admin_token', JSON.stringify(user), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/'
+      });
+      return response;
     }
 
     const [rows]: any = await db.execute('SELECT * FROM users WHERE nik_hash = ?', [email]);
     
     if (rows.length > 0) {
-      const user = rows[0];
-      if (password === user.password_hash || password === 'password123') { // Fallback password
-        return NextResponse.json({
+      const userRaw = rows[0];
+      if (password === userRaw.password_hash || password === 'password123') { // Fallback password
+        const user = { id: userRaw.id, role: userRaw.role, name: userRaw.name, avatar: userRaw.avatar_url };
+        const response = NextResponse.json({
           message: 'Login sukses',
-          user: { id: user.id, role: user.role, name: user.name, avatar: user.avatar_url }
+          user
         });
+        response.cookies.set('admin_token', JSON.stringify(user), {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/'
+        });
+        return response;
       } else {
         return NextResponse.json({ error: 'Password salah' }, { status: 401 });
       }

@@ -46,8 +46,8 @@ export default function WargaRegister() {
       if (!res.ok || data.error) {
         setErrorMsg(data.error || 'Pendaftaran gagal. Silakan coba lagi.');
       } else {
-        localStorage.setItem('warga_session', JSON.stringify(data.user));
-        router.push('/warga/home');
+        // Success: Redirect to login without auto-login
+        router.push('/warga/login?registered=true');
       }
     } catch {
       setErrorMsg('Terjadi kesalahan koneksi jaringan.');

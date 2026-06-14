@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import BottomNav from '@/components/BottomNav'; // We will create this
 
 export default function WargaHome() {
   const router = useRouter();
@@ -51,135 +50,125 @@ export default function WargaHome() {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 60) return `${diffMins} mnt lalu`;
+    if (diffMins < 60) return `${diffMins} menit yang lalu`;
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} jam lalu`;
-    return `${Math.floor(diffHours / 24)} hri lalu`;
+    if (diffHours < 24) return `${diffHours} jam yang lalu`;
+    return `${Math.floor(diffHours / 24)} hari yang lalu`;
   };
 
   const totalReports = reports.length;
   const latestReport = reports[0];
 
   return (
-    <div className="flex-1 flex flex-col bg-background min-h-screen pb-28 relative">
-      {/* TopAppBar */}
-      <div className="bg-surface border-b border-outline-variant flex items-center justify-between px-5 w-full h-16 z-40 sticky top-0">
-        <div className="flex items-center gap-3">
-          <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK"
-            className="w-8 h-8 rounded-md object-contain"
-            alt="Logo"
-          />
-          <span className="font-headline-md text-xl font-bold text-primary tracking-tight">SIGAP</span>
+    <div className="flex flex-col gap-8 pb-10">
+      
+      {/* Hero / Greeting Section */}
+      <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 pointer-events-none"></div>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {getGreeting()}, <span className="text-[#0b57d0]">{user?.name}</span>
+          </h1>
+          <p className="text-gray-600 text-lg">
+            Sistem Informasi Keamanan dan Pelaporan Warga SIGAP
+          </p>
         </div>
-        <div className="flex items-center gap-4">
-          <button className="relative p-2 rounded-full hover:bg-surface-container-high transition-colors text-primary">
-            <span className="material-symbols-outlined text-[24px]">notifications</span>
-            <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-surface"></span>
-          </button>
-          <button 
-            onClick={() => { localStorage.removeItem('warga_session'); router.push('/warga/login'); }}
-            className="text-error"
-          >
-            <span className="material-symbols-outlined text-[24px]">logout</span>
-          </button>
+        <div className="relative z-10 shrink-0">
+          <Link href="/warga/lapor" className="inline-flex items-center gap-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white px-6 py-3 rounded-full font-medium transition-colors shadow-sm">
+            <span className="material-symbols-outlined">add_circle</span>
+            Buat Laporan Baru
+          </Link>
         </div>
       </div>
 
-      <div className="px-5 pt-6 flex-col gap-6 flex">
-        {/* Greeting Section */}
-        <div className="flex flex-col gap-1">
-          <h1 className="font-headline-lg-mobile text-2xl font-bold text-on-surface leading-tight">
-            {getGreeting()},<br/>{user?.name}
-          </h1>
-          <p className="font-body-md text-on-surface-variant mt-1">
-            Sistem pelaporan warga aktif.
-          </p>
-        </div>
-
-        {/* Summary Grid */}
-        <div className="flex gap-4">
-          {/* Card 1 */}
-          <div className="flex-1 bg-background-pure border border-outline-variant/50 rounded-xl p-4 shadow-sm flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <span className="font-label-caps text-xs font-bold uppercase text-on-surface-variant">Total Laporan</span>
-              <span className="material-symbols-outlined text-[20px] text-primary/70">assignment</span>
-            </div>
+      {/* Summary Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Card 1 */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-6">
+          <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-[#0b57d0] shrink-0">
+            <span className="material-symbols-outlined text-[32px]">assignment</span>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Total Laporan Anda</p>
             <div className="flex items-baseline gap-2">
               {isLoading ? (
-                <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                <div className="w-8 h-8 border-2 border-[#0b57d0] border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                <span className="font-headline-lg text-3xl font-bold text-primary">{totalReports}</span>
+                <span className="text-4xl font-bold text-gray-900">{totalReports}</span>
               )}
-              <span className="font-body-md text-status-pending text-xs">Bulan ini</span>
+              <span className="text-sm text-gray-500">laporan terkirim</span>
             </div>
           </div>
+        </div>
 
-          {/* Card 2 */}
-          <div className="flex-1 bg-background-pure border border-outline-variant/50 rounded-xl p-4 shadow-sm flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <span className="font-label-caps text-xs font-bold uppercase text-on-surface-variant">Status Terakhir</span>
-              <span 
-                className="material-symbols-outlined text-[20px]"
-                style={{ color: latestReport?.status === 'selesai' ? '#10B981' : latestReport?.status === 'proses' ? '#FFC107' : '#6B7280' }}
-              >
-                {latestReport?.status === 'selesai' ? 'check_circle' : latestReport?.status === 'proses' ? 'directions_run' : 'schedule'}
-              </span>
-            </div>
+        {/* Card 2 */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-6">
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${
+            latestReport?.status === 'selesai' ? 'bg-emerald-50 text-emerald-600' : 
+            latestReport?.status === 'proses' ? 'bg-amber-50 text-amber-600' : 
+            'bg-gray-50 text-gray-600'
+          }`}>
+            <span className="material-symbols-outlined text-[32px]">
+              {latestReport?.status === 'selesai' ? 'check_circle' : latestReport?.status === 'proses' ? 'directions_run' : 'schedule'}
+            </span>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Status Laporan Terakhir</p>
             <div className="flex flex-col">
               {isLoading ? (
-                <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                <div className="w-8 h-8 border-2 border-[#0b57d0] border-t-transparent rounded-full animate-spin mt-1"></div>
               ) : (
                 <>
-                  <span className="font-headline-md text-lg font-semibold text-on-surface">
-                    {latestReport ? (latestReport.status === 'selesai' ? 'Selesai' : latestReport.status === 'proses' ? 'Diproses' : 'Menunggu') : '-'}
+                  <span className="text-2xl font-bold text-gray-900 capitalize">
+                    {latestReport ? (latestReport.status === 'selesai' ? 'Selesai' : latestReport.status === 'proses' ? 'Sedang Diproses' : 'Menunggu Validasi') : 'Belum Ada'}
                   </span>
-                  <span className="font-body-md text-on-surface-variant text-xs truncate">
-                    {latestReport ? `ID #${String(latestReport.id).substring(0,6).toUpperCase()}` : 'Belum ada'}
+                  <span className="text-sm text-gray-500 truncate mt-1">
+                    {latestReport ? `Laporan #${String(latestReport.id).substring(0,8).toUpperCase()} - ${latestReport.category}` : 'Mari buat laporan pertama Anda'}
                   </span>
                 </>
               )}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Recent Updates Header */}
-        <div className="flex items-center justify-between mt-2 mb-2">
-          <h2 className="font-headline-md text-xl font-bold text-on-surface">Pembaruan Terkini</h2>
-          <Link href="/warga/riwayat" className="font-body-md text-primary font-semibold hover:underline">
-            Lihat Semua
+      {/* Recent Updates Header */}
+      <div className="mt-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Pembaruan Terkini</h2>
+          <Link href="/warga/riwayat" className="text-[#0b57d0] font-semibold hover:underline flex items-center gap-1">
+            Lihat Semua Riwayat <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
           </Link>
         </div>
 
-        {/* Incident Cards */}
+        {/* Incident Grid */}
         {isLoading ? (
-          <div className="py-8 flex justify-center"><span className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></span></div>
+          <div className="py-12 flex justify-center"><div className="w-10 h-10 border-4 border-[#0b57d0] border-t-transparent rounded-full animate-spin"></div></div>
         ) : reports.length === 0 ? (
-          <div className="py-8 flex items-center justify-center text-on-surface-variant font-body-md">
-            Belum ada laporan.
+          <div className="bg-white rounded-2xl border border-dashed border-gray-300 py-16 flex flex-col items-center justify-center text-center">
+            <span className="material-symbols-outlined text-[48px] text-gray-300 mb-4">inbox</span>
+            <h3 className="text-lg font-medium text-gray-900 mb-1">Belum ada laporan</h3>
+            <p className="text-gray-500">Anda belum pernah mengirimkan laporan keamanan.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {reports.slice(0, 3).map((item) => {
-              let statusColor = '#6B7280';
-              let statusBg = 'bg-gray-500';
-              let statusBorder = 'border-gray-500/20';
-              let statusBgLight = 'bg-gray-500/10';
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reports.slice(0, 6).map((item) => {
+              let statusColor = 'text-gray-600';
+              let statusBg = 'bg-gray-100';
+              let statusBorder = 'border-gray-200';
               let statusText = 'Menunggu';
               let iconName = 'assignment';
 
               if (item.status === 'proses') {
-                statusColor = '#FFC107';
-                statusBg = 'bg-[#FFC107]';
-                statusBorder = 'border-[#FFC107]/20';
-                statusBgLight = 'bg-[#FFC107]/10';
+                statusColor = 'text-amber-700';
+                statusBg = 'bg-amber-50';
+                statusBorder = 'border-amber-200';
                 statusText = 'Diproses';
                 iconName = 'directions_car';
               } else if (item.status === 'selesai') {
-                statusColor = '#10B981';
-                statusBg = 'bg-[#10B981]';
-                statusBorder = 'border-[#10B981]/20';
-                statusBgLight = 'bg-[#10B981]/10';
+                statusColor = 'text-emerald-700';
+                statusBg = 'bg-emerald-50';
+                statusBorder = 'border-emerald-200';
                 statusText = 'Selesai';
                 iconName = 'check_circle';
               }
@@ -189,31 +178,40 @@ export default function WargaHome() {
               else if (item.category.toLowerCase().includes('bencana')) iconName = 'warning';
 
               return (
-                <div key={item.id} className="bg-background-pure border border-outline-variant/50 rounded-xl overflow-hidden shadow-sm flex relative mb-3">
-                  {/* Left Status Bar */}
-                  <div className={`w-1.5 h-full absolute left-0 top-0 z-10 ${statusBg}`}></div>
+                <div key={item.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full">
                   
-                  <div className="p-4 pl-5 flex items-start gap-4 w-full">
-                    {item.image_url ? (
-                      <img src={item.image_url} className="w-12 h-12 rounded-lg shrink-0 bg-surface-container-high object-cover" alt="Inc" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
-                        <span className="material-symbols-outlined text-[24px] text-on-surface-variant">{iconName}</span>
-                      </div>
-                    )}
-
-                    <div className="flex flex-col flex-1 gap-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="font-body-md font-semibold text-on-surface truncate">{item.category}</span>
-                        <span className="font-label-caps text-[10px] uppercase font-bold text-on-surface-variant shrink-0 ml-2">{getTimeAgo(item.created_at)}</span>
-                      </div>
-                      <span className="font-body-md text-on-surface-variant text-sm truncate">{item.description}</span>
-                      
-                      <div className="flex justify-between items-center mt-1">
-                        <div className={`inline-flex items-center px-2 py-0.5 rounded-full border self-start ${statusBgLight} ${statusBorder}`}>
-                          <span className="font-label-caps text-[10px] font-bold" style={{ color: statusColor }}>{statusText}</span>
+                  {item.image_url ? (
+                    <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
+                      <img src={item.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Insiden" />
+                      <div className="absolute top-3 left-3">
+                        <div className={`inline-flex items-center px-2.5 py-1 rounded-full border ${statusBg} ${statusBorder} backdrop-blur-md bg-white/90`}>
+                          <span className={`text-xs font-bold ${statusColor}`}>{statusText}</span>
                         </div>
                       </div>
+                    </div>
+                  ) : (
+                    <div className="h-32 w-full bg-gray-50 flex items-center justify-center relative border-b border-gray-100">
+                      <span className="material-symbols-outlined text-[48px] text-gray-300">{iconName}</span>
+                      <div className="absolute top-3 left-3">
+                        <div className={`inline-flex items-center px-2.5 py-1 rounded-full border ${statusBg} ${statusBorder}`}>
+                          <span className={`text-xs font-bold ${statusColor}`}>{statusText}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-semibold text-gray-900 text-lg line-clamp-1" title={item.category}>{item.category}</h3>
+                    </div>
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-4 flex-1" title={item.description}>{item.description}</p>
+                    
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                      <div className="flex items-center text-xs text-gray-500 font-medium">
+                        <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
+                        {getTimeAgo(item.created_at)}
+                      </div>
+                      <span className="text-xs text-gray-400 font-mono">#{String(item.id).substring(0,6).toUpperCase()}</span>
                     </div>
                   </div>
                 </div>
@@ -222,8 +220,6 @@ export default function WargaHome() {
           </div>
         )}
       </div>
-      
-      <BottomNav activeTab="home" />
     </div>
   );
 }
