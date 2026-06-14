@@ -27,8 +27,8 @@ export async function POST(request: Request) {
     const id = crypto.randomUUID();
 
     await db.execute(
-      'INSERT INTO reports (id, description, lat, lng, image_url, category, reporter_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [id, description, lat, lng, image_url, category, reporter_id]
+      'INSERT INTO reports (id, description, lat, lng, image_url, category, reporter_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [id, description, lat, lng, image_url, category, reporter_id, 'pending']
     );
 
     return NextResponse.json({ message: 'Laporan berhasil dikirim', id }, { status: 201 });

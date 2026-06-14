@@ -30,8 +30,8 @@ export default function WargaRiwayat() {
       const res = await fetch('/api/reports');
       const data = await res.json();
       
-      if (res.ok) {
-        const userReports = data.reports.filter((r: any) => r.reporter_id === userId);
+      if (res.ok && Array.isArray(data)) {
+        const userReports = data.filter((r: any) => r.reporter_id === userId);
         userReports.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         setReports(userReports);
       }
