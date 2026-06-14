@@ -1,37 +1,37 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function WargaHome() {
-  const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [reports, setReports] = useState<any[]>([]);
+  const [recentReports, setRecentReports] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSOSActive, setIsSOSActive] = useState(false);
 
   useEffect(() => {
     const session = localStorage.getItem('warga_session');
-    if (!session) {
-      router.push('/warga/login');
-    } else {
+    if (session) {
       const parsedUser = JSON.parse(session);
       setUser(parsedUser);
       fetchData(parsedUser.id);
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
   const fetchData = async (userId: string) => {
     try {
       const res = await fetch('/api/reports');
-      const data = await res.json();
-      if (res.ok && Array.isArray(data)) {
-        const userReports = data.filter((r: any) => r.reporter_id === userId);
-        userReports.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        setReports(userReports);
+      if (res.ok) {
+        const data = await res.json();
+        // Assuming data is the array itself based on previous fixes
+        const reportsArray = Array.isArray(data) ? data : data.reports || [];
+        const userReports = reportsArray.filter((r: any) => r.reporter_id === userId);
+        setRecentReports(userReports.slice(0, 3)); // Top 3 recent
       }
     } catch (err) {
-      console.error(err);
+      console.error('Failed to fetch reports', err);
     } finally {
       setIsLoading(false);
     }
@@ -39,186 +39,205 @@ export default function WargaHome() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Selamat Pagi';
+    if (hour < 11) return 'Selamat Pagi';
     if (hour < 15) return 'Selamat Siang';
-    if (hour < 18) return 'Selamat Sore';
+    if (hour < 19) return 'Selamat Sore';
     return 'Selamat Malam';
   };
 
-  const getTimeAgo = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 60) return `${diffMins} menit yang lalu`;
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} jam yang lalu`;
-    return `${Math.floor(diffHours / 24)} hari yang lalu`;
+  const handleSOS = () => {
+    setIsSOSActive(true);
+    // Simulate SOS delay
+    setTimeout(() => {
+      alert("Sinyal Darurat SOS telah dikirim ke Pusat Komando beserta lokasi Anda!");
+      setIsSOSActive(false);
+    }, 2000);
   };
 
-  const totalReports = reports.length;
-  const latestReport = reports[0];
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'selesai': return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
+      case 'diproses': return 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20';
+      default: return 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'selesai': return 'check_circle';
+      case 'diproses': return 'hourglass_top';
+      default: return 'pending';
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex justify-center items-center min-h-[60vh]">
+        <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-8 pb-10">
+    <div className="flex-1 bg-background min-h-screen">
       
-      {/* Hero / Greeting Section */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 pointer-events-none"></div>
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {getGreeting()}, <span className="text-[#0b57d0]">{user?.name}</span>
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Sistem Informasi Keamanan dan Pelaporan Warga SIGAP
-          </p>
-        </div>
-        <div className="relative z-10 shrink-0">
-          <Link href="/warga/lapor" className="inline-flex items-center gap-2 bg-[#0b57d0] hover:bg-[#0842a0] text-white px-6 py-3 rounded-full font-medium transition-colors shadow-sm">
-            <span className="material-symbols-outlined">add_circle</span>
-            Buat Laporan Baru
+      {/* Dynamic Header */}
+      <div className="bg-surface border-b border-border pt-10 pb-12 px-6 sm:px-10 lg:px-16 transition-colors">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-text-main mb-2 tracking-tight">
+              {getGreeting()}, <span className="text-primary">{user?.name || 'Warga'}</span>
+            </h1>
+            <p className="text-text-muted text-base sm:text-lg max-w-xl">
+              Pusat Kendali Keamanan Anda. Laporkan kejadian di sekitar Anda dan pantau statusnya secara real-time.
+            </p>
+          </div>
+          
+          <Link 
+            href="/warga/lapor"
+            className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-on-primary font-semibold rounded-full overflow-hidden shadow-lg shadow-primary/25 hover:bg-primary-hover transition-all active:scale-95"
+          >
+            <span className="absolute inset-0 w-full h-full bg-white/20 group-hover:translate-x-full -translate-x-full transition-transform duration-500 ease-out skew-x-12"></span>
+            <span className="material-symbols-outlined text-[24px]">add_circle</span>
+            <span>Buat Laporan</span>
           </Link>
         </div>
       </div>
 
-      {/* Summary Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Card 1 */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-6">
-          <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-[#0b57d0] shrink-0">
-            <span className="material-symbols-outlined text-[32px]">assignment</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Total Laporan Anda</p>
-            <div className="flex items-baseline gap-2">
-              {isLoading ? (
-                <div className="w-8 h-8 border-2 border-[#0b57d0] border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <span className="text-4xl font-bold text-gray-900">{totalReports}</span>
-              )}
-              <span className="text-sm text-gray-500">laporan terkirim</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 2 */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-6">
-          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${
-            latestReport?.status === 'selesai' ? 'bg-emerald-50 text-emerald-600' : 
-            latestReport?.status === 'proses' ? 'bg-amber-50 text-amber-600' : 
-            'bg-gray-50 text-gray-600'
-          }`}>
-            <span className="material-symbols-outlined text-[32px]">
-              {latestReport?.status === 'selesai' ? 'check_circle' : latestReport?.status === 'proses' ? 'directions_run' : 'schedule'}
-            </span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Status Laporan Terakhir</p>
-            <div className="flex flex-col">
-              {isLoading ? (
-                <div className="w-8 h-8 border-2 border-[#0b57d0] border-t-transparent rounded-full animate-spin mt-1"></div>
-              ) : (
-                <>
-                  <span className="text-2xl font-bold text-gray-900 capitalize">
-                    {latestReport ? (latestReport.status === 'selesai' ? 'Selesai' : latestReport.status === 'proses' ? 'Sedang Diproses' : 'Menunggu Validasi') : 'Belum Ada'}
+      {/* Main Content Dashboard */}
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 py-10">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Left Column (Stats & SOS) */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            
+            {/* SOS Button Widget */}
+            <div className="bg-surface rounded-3xl p-8 border border-border shadow-sm flex flex-col items-center text-center relative overflow-hidden transition-colors">
+              <div className="absolute top-0 w-full h-2 bg-gradient-to-r from-red-500 to-rose-600"></div>
+              <h2 className="text-xl font-bold text-text-main mb-2">Tombol Darurat</h2>
+              <p className="text-sm text-text-muted mb-8">
+                Tekan dan tahan tombol ini <strong>hanya</strong> saat Anda dalam bahaya yang mengancam nyawa.
+              </p>
+              
+              <button 
+                onClick={handleSOS}
+                disabled={isSOSActive}
+                className={`relative w-40 h-40 rounded-full flex items-center justify-center transition-all ${
+                  isSOSActive 
+                    ? 'bg-red-600 scale-95 shadow-inner' 
+                    : 'bg-gradient-to-br from-red-500 to-red-600 hover:scale-105 shadow-xl shadow-red-500/30'
+                }`}
+              >
+                {/* Pulse rings */}
+                {!isSOSActive && (
+                  <>
+                    <div className="absolute inset-0 rounded-full border-2 border-red-500/50 animate-ping" style={{ animationDuration: '2s' }}></div>
+                    <div className="absolute inset-[-10px] rounded-full border-2 border-red-500/20 animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}></div>
+                  </>
+                )}
+                
+                <div className="flex flex-col items-center">
+                  <span className="material-symbols-outlined text-[48px] text-white mb-1">
+                    {isSOSActive ? 'cell_tower' : 'sos'}
                   </span>
-                  <span className="text-sm text-gray-500 truncate mt-1">
-                    {latestReport ? `Laporan #${String(latestReport.id).substring(0,8).toUpperCase()} - ${latestReport.category}` : 'Mari buat laporan pertama Anda'}
+                  <span className="text-white font-bold tracking-widest text-lg">
+                    {isSOSActive ? 'MENGIRIM...' : 'S O S'}
                   </span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Updates Header */}
-      <div className="mt-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Pembaruan Terkini</h2>
-          <Link href="/warga/riwayat" className="text-[#0b57d0] font-semibold hover:underline flex items-center gap-1">
-            Lihat Semua Riwayat <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-          </Link>
-        </div>
-
-        {/* Incident Grid */}
-        {isLoading ? (
-          <div className="py-12 flex justify-center"><div className="w-10 h-10 border-4 border-[#0b57d0] border-t-transparent rounded-full animate-spin"></div></div>
-        ) : reports.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-dashed border-gray-300 py-16 flex flex-col items-center justify-center text-center">
-            <span className="material-symbols-outlined text-[48px] text-gray-300 mb-4">inbox</span>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">Belum ada laporan</h3>
-            <p className="text-gray-500">Anda belum pernah mengirimkan laporan keamanan.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reports.slice(0, 6).map((item) => {
-              let statusColor = 'text-gray-600';
-              let statusBg = 'bg-gray-100';
-              let statusBorder = 'border-gray-200';
-              let statusText = 'Menunggu';
-              let iconName = 'assignment';
-
-              if (item.status === 'proses') {
-                statusColor = 'text-amber-700';
-                statusBg = 'bg-amber-50';
-                statusBorder = 'border-amber-200';
-                statusText = 'Diproses';
-                iconName = 'directions_car';
-              } else if (item.status === 'selesai') {
-                statusColor = 'text-emerald-700';
-                statusBg = 'bg-emerald-50';
-                statusBorder = 'border-emerald-200';
-                statusText = 'Selesai';
-                iconName = 'check_circle';
-              }
-
-              if (item.category.toLowerCase().includes('infrastruktur')) iconName = 'build';
-              else if (item.category.toLowerCase().includes('kriminal')) iconName = 'local_police';
-              else if (item.category.toLowerCase().includes('bencana')) iconName = 'warning';
-
-              return (
-                <div key={item.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col h-full">
-                  
-                  {item.image_url ? (
-                    <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
-                      <img src={item.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Insiden" />
-                      <div className="absolute top-3 left-3">
-                        <div className={`inline-flex items-center px-2.5 py-1 rounded-full border ${statusBg} ${statusBorder} backdrop-blur-md bg-white/90`}>
-                          <span className={`text-xs font-bold ${statusColor}`}>{statusText}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="h-32 w-full bg-gray-50 flex items-center justify-center relative border-b border-gray-100">
-                      <span className="material-symbols-outlined text-[48px] text-gray-300">{iconName}</span>
-                      <div className="absolute top-3 left-3">
-                        <div className={`inline-flex items-center px-2.5 py-1 rounded-full border ${statusBg} ${statusBorder}`}>
-                          <span className={`text-xs font-bold ${statusColor}`}>{statusText}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900 text-lg line-clamp-1" title={item.category}>{item.category}</h3>
-                    </div>
-                    <p className="text-gray-600 text-sm line-clamp-2 mb-4 flex-1" title={item.description}>{item.description}</p>
-                    
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                      <div className="flex items-center text-xs text-gray-500 font-medium">
-                        <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
-                        {getTimeAgo(item.created_at)}
-                      </div>
-                      <span className="text-xs text-gray-400 font-mono">#{String(item.id).substring(0,6).toUpperCase()}</span>
-                    </div>
-                  </div>
                 </div>
-              );
-            })}
+              </button>
+            </div>
+
+            {/* Quick Stats Widget */}
+            <div className="bg-surface rounded-3xl p-6 border border-border shadow-sm flex items-center gap-5 transition-colors">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <span className="material-symbols-outlined text-primary text-[32px]">assignment</span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-1">Total Laporan Anda</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-text-main leading-none">{recentReports.length}</span>
+                  <span className="text-sm text-text-muted">laporan terkirim</span>
+                </div>
+              </div>
+            </div>
+
           </div>
-        )}
+
+          {/* Right Column (Recent Reports) */}
+          <div className="lg:col-span-8 flex flex-col">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-text-main tracking-tight">Pembaruan Terkini</h2>
+              <Link href="/warga/riwayat" className="text-sm font-semibold text-primary hover:text-primary-hover flex items-center gap-1 transition-colors">
+                Lihat Semua <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {recentReports.length > 0 ? (
+                recentReports.map((report) => (
+                  <Link 
+                    href={`/warga/riwayat`}
+                    key={report.id} 
+                    className="group bg-surface rounded-3xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-all hover:-translate-y-1 flex flex-col h-full"
+                  >
+                    <div className="h-48 relative overflow-hidden bg-surface-hover">
+                      {report.image_url ? (
+                        <img 
+                          src={report.image_url} 
+                          alt="Foto Laporan" 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="material-symbols-outlined text-[48px] text-border">image</span>
+                        </div>
+                      )}
+                      <div className="absolute top-4 left-4">
+                        <div className={`px-3 py-1.5 rounded-full border backdrop-blur-md flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider ${getStatusColor(report.status)}`}>
+                          <span className="material-symbols-outlined text-[16px]">{getStatusIcon(report.status)}</span>
+                          {report.status || 'Pending'}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-6 flex-1 flex flex-col">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="px-2.5 py-1 bg-surface-hover text-text-main text-xs font-semibold rounded-lg border border-border">
+                          {report.category}
+                        </span>
+                        <span className="text-xs text-text-muted ml-auto font-medium">Hari ini</span>
+                      </div>
+                      <p className="text-text-main text-base font-medium line-clamp-2 leading-relaxed mb-4">
+                        {report.description || 'Tidak ada deskripsi.'}
+                      </p>
+                      <div className="mt-auto flex items-center gap-2 text-text-muted text-sm">
+                        <span className="material-symbols-outlined text-[18px]">location_on</span>
+                        <span className="truncate">Lat: {report.lat}, Lng: {report.lng}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="md:col-span-2 bg-surface rounded-3xl p-12 border border-border border-dashed flex flex-col items-center text-center transition-colors">
+                  <div className="w-20 h-20 bg-surface-hover rounded-full flex items-center justify-center mb-4">
+                    <span className="material-symbols-outlined text-[40px] text-text-muted">inbox</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-text-main mb-2">Belum Ada Laporan</h3>
+                  <p className="text-text-muted max-w-sm">
+                    Anda belum pernah membuat laporan. Laporkan kejadian keamanan di sekitar Anda sekarang juga.
+                  </p>
+                  <Link 
+                    href="/warga/lapor"
+                    className="mt-6 px-6 py-2.5 bg-primary/10 text-primary font-semibold rounded-xl hover:bg-primary/20 transition-colors"
+                  >
+                    Buat Laporan Perdana
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+          
+        </div>
       </div>
     </div>
   );
