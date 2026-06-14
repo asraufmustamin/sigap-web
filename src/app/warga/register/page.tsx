@@ -57,168 +57,162 @@ export default function WargaRegister() {
   };
 
   return (
-    <div className="flex-1 bg-[#f0f4f9] min-h-screen flex flex-col justify-center items-center p-4 sm:p-8 font-body-md">
+    <div className="flex min-h-screen bg-background font-body">
       
-      <div className="w-full max-w-[1040px] bg-white rounded-[28px] flex flex-col md:flex-row overflow-hidden min-h-[500px] p-8 sm:p-10 shadow-sm border border-gray-100">
+      {/* Left Hero Section (Desktop Only) */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-surface overflow-hidden">
+        <div className="absolute inset-0 bg-primary/10 mix-blend-multiply dark:mix-blend-color-burn z-10" />
+        <img 
+          src="https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=2000&auto=format&fit=crop" 
+          alt="Keamanan dan Pelayanan Warga" 
+          className="absolute inset-0 w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-[10s]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent z-20" />
         
-        {/* Left Column: Branding */}
-        <div className="flex-1 flex flex-col md:pr-12 mb-10 md:mb-0">
-          <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK" 
-            alt="SIGAP Logo"
-            className="w-14 h-14 rounded-full border border-gray-100 mb-6 object-cover"
-          />
-          <h1 className="text-3xl md:text-4xl text-[#1f1f1f] tracking-tight mb-4 font-medium" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>Buat Akun</h1>
-          <p className="text-base text-[#444746] mb-8 leading-relaxed">
-            Daftarkan identitas Anda untuk mendapatkan akses ke layanan pelaporan keamanan SIGAP.
-          </p>
-
-          <div className="hidden md:block mt-auto text-sm text-[#444746] leading-relaxed max-w-[350px]">
-            Sistem Informasi Keamanan dan Pelaporan dirancang untuk memberikan respons cepat terhadap kejadian di lingkungan Anda.
+        <div className="absolute bottom-0 left-0 p-12 z-30 w-full">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg">
+              <span className="material-symbols-outlined text-on-primary text-[28px]">shield_person</span>
+            </div>
+            <h1 className="text-3xl font-bold text-text-main tracking-tight">SIGAP</h1>
           </div>
+          <h2 className="text-4xl font-semibold text-text-main leading-tight mb-4 max-w-lg">
+            Bergabunglah Bersama Kami.
+          </h2>
+          <p className="text-text-muted text-lg max-w-md">
+            Jadilah bagian dari komunitas cerdas yang tanggap lingkungan. Laporkan dan pantau langsung dari genggaman Anda.
+          </p>
         </div>
+      </div>
 
-        {/* Right Column: Form */}
-        <div className="flex-1 w-full max-w-[450px] md:max-w-none md:ml-auto flex flex-col justify-between pt-2">
+      {/* Right Form Section */}
+      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-24">
+        
+        <div className="w-full max-w-md mx-auto">
           
-          <form onSubmit={handleRegister} className="flex flex-col w-full h-full">
+          <div className="lg:hidden flex flex-col items-center mb-10 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg mb-4">
+              <span className="material-symbols-outlined text-on-primary text-[32px]">shield_person</span>
+            </div>
+            <h1 className="text-3xl font-bold text-text-main tracking-tight">SIGAP</h1>
+            <p className="text-text-muted text-sm mt-2">Pendaftaran Warga Baru</p>
+          </div>
+
+          <div className="hidden lg:block mb-10">
+            <h2 className="text-3xl font-bold text-text-main mb-2">Buat Akun</h2>
+            <p className="text-text-muted">Lengkapi data diri Anda untuk memulai pengalaman pelaporan.</p>
+          </div>
+
+          <form onSubmit={handleRegister} className="flex flex-col gap-5">
             
-            {errorMsg ? (
-              <div className="flex items-center gap-2 mb-6 p-3 bg-red-50 text-[#d93025] rounded-xl border border-red-100 text-sm">
-                <span className="material-symbols-outlined text-[18px]">error</span>
+            {errorMsg && (
+              <div className="flex items-center gap-3 p-4 bg-red-500/10 text-red-600 dark:text-red-400 rounded-2xl border border-red-500/20 text-sm font-medium animate-in fade-in">
+                <span className="material-symbols-outlined text-[20px]">error</span>
                 <span>{errorMsg}</span>
               </div>
-            ) : null}
+            )}
 
-            <div className="flex flex-col md:flex-row gap-4 mb-4">
-              {/* Name Input */}
-              <div className="relative flex-1">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="name" className="text-sm font-semibold text-text-main ml-1">Nama Lengkap</label>
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">badge</span>
                 <input
                   type="text"
                   id="name"
-                  className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
-                  placeholder=" "
+                  className="w-full pl-12 pr-4 py-3.5 bg-surface border border-border rounded-xl text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
+                  placeholder="Contoh: Budi Santoso"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={isLoading}
                 />
-                <label
-                  htmlFor="name"
-                  className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none whitespace-nowrap"
-                >
-                  Nama Lengkap
-                </label>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-5">
+              <div className="flex flex-col gap-1.5 flex-1">
+                <label htmlFor="nik" className="text-sm font-semibold text-text-main ml-1">NIK (16 Digit)</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">pin</span>
+                  <input
+                    type="text"
+                    id="nik"
+                    className="w-full pl-12 pr-4 py-3.5 bg-surface border border-border rounded-xl text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
+                    placeholder="Masukkan NIK"
+                    value={nik}
+                    onChange={(e) => setNik(e.target.value.replace(/[^0-9]/g, '').substring(0, 16))}
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
 
-              {/* NIK Input */}
-              <div className="relative flex-1">
+              <div className="flex flex-col gap-1.5 flex-1">
+                <label htmlFor="phone" className="text-sm font-semibold text-text-main ml-1">Nomor HP</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">phone_iphone</span>
+                  <input
+                    type="tel"
+                    id="phone"
+                    className="w-full pl-12 pr-4 py-3.5 bg-surface border border-border rounded-xl text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
+                    placeholder="0812..."
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="password" className="text-sm font-semibold text-text-main ml-1">Kata Sandi Baru</label>
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted">lock</span>
                 <input
-                  type="text"
-                  id="nik"
-                  className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
-                  placeholder=" "
-                  value={nik}
-                  onChange={(e) => setNik(e.target.value.replace(/[^0-9]/g, '').substring(0, 16))}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="w-full pl-12 pr-12 py-3.5 bg-surface border border-border rounded-xl text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
+                  placeholder="Minimal 6 karakter"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
-                <label
-                  htmlFor="nik"
-                  className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none whitespace-nowrap"
+                <button 
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-main transition-colors"
                 >
-                  NIK
-                </label>
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
               </div>
             </div>
 
-            {/* Phone Input */}
-            <div className="mb-4 relative">
-              <input
-                type="tel"
-                id="phone"
-                className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
-                placeholder=" "
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                disabled={isLoading}
-              />
-              <label
-                htmlFor="phone"
-                className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none whitespace-nowrap"
-              >
-                Nomor Handphone Aktif
-              </label>
-            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-3.5 mt-6 bg-primary text-on-primary font-semibold rounded-xl hover:bg-primary-hover shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 scale-[0.98]' : 'active:scale-[0.98]'}`}
+            >
+              {isLoading ? (
+                <>
+                  <span className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></span>
+                  <span>Memproses...</span>
+                </>
+              ) : (
+                <span>Daftar Sekarang</span>
+              )}
+            </button>
 
-            {/* Password Input */}
-            <div className="mb-2 relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                className="peer block w-full rounded-[4px] border border-[#747775] bg-transparent px-4 py-4 text-base text-[#1f1f1f] focus:border-2 focus:border-[#0b57d0] focus:px-[15px] focus:py-[15px] focus:outline-none appearance-none"
-                placeholder=" "
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-              />
-              <label
-                htmlFor="password"
-                className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none whitespace-nowrap"
-              >
-                Buat Kata Sandi Baru
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2 mb-6 mt-2 cursor-pointer w-fit group">
-              <input 
-                type="checkbox" 
-                id="show-password"
-                className="w-4 h-4 rounded-[2px] border-[#747775] text-[#0b57d0] focus:ring-[#0b57d0] cursor-pointer"
-                checked={showPassword}
-                onChange={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
-              />
-              <label htmlFor="show-password" className="text-sm text-[#1f1f1f] cursor-pointer select-none">Tampilkan sandi</label>
-            </div>
-
-            <p className="text-sm text-[#444746] mb-8 leading-relaxed">
-              Dengan membuat akun, Anda menyetujui <a href="#" className="text-[#0b57d0] hover:underline font-medium">Persyaratan Layanan</a> dan <a href="#" className="text-[#0b57d0] hover:underline font-medium">Kebijakan Privasi</a> SIGAP.
-            </p>
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
-              <Link 
-                href="/warga/login" 
-                className="text-[#0b57d0] font-medium text-sm hover:bg-blue-50 px-3 py-2 rounded-full -ml-3 transition-colors text-left"
-              >
-                Masuk saja
+            <div className="mt-8 text-center text-sm text-text-muted">
+              Sudah punya akun?{' '}
+              <Link href="/warga/login" className="font-semibold text-primary hover:text-primary-hover transition-colors">
+                Masuk di sini
               </Link>
-              <button 
-                type="submit"
-                disabled={isLoading}
-                className={`bg-[#0b57d0] text-white font-medium text-sm px-6 py-2.5 rounded-full hover:bg-[#0842a0] transition-colors flex items-center justify-center min-w-[100px] ${isLoading ? 'opacity-70' : ''}`}
-              >
-                {isLoading ? (
-                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                ) : (
-                  'Buat Akun'
-                )}
-              </button>
             </div>
+
           </form>
-
         </div>
+
       </div>
-
-      <div className="w-full max-w-[1040px] flex justify-between items-center mt-6 px-2 text-xs text-[#444746]">
-        <div>
-          <span className="cursor-pointer hover:bg-gray-200 px-2 py-1 rounded">Indonesia <span className="material-symbols-outlined text-[12px] align-middle ml-1">arrow_drop_down</span></span>
-        </div>
-        <div className="flex gap-4">
-          <a href="#" className="hover:bg-gray-200 px-2 py-1 rounded transition-colors">Bantuan</a>
-          <a href="#" className="hover:bg-gray-200 px-2 py-1 rounded transition-colors">Privasi</a>
-          <a href="#" className="hover:bg-gray-200 px-2 py-1 rounded transition-colors">Persyaratan</a>
-        </div>
-      </div>
-
     </div>
   );
 }

@@ -3,14 +3,18 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
 export default function WargaTopNav() {
   const router = useRouter();
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const session = localStorage.getItem('warga_session');
     if (session) {
       setUser(JSON.parse(session));
@@ -30,7 +34,7 @@ export default function WargaTopNav() {
   ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <nav className="glass-panel sticky top-0 z-50 border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -38,9 +42,9 @@ export default function WargaTopNav() {
               <img 
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVHjIZWBDuWlh7HjNLkZcS3Khwpgv70J3Mwr48vlFF5aOX_rFHRyEZv929t0TXE-YhzK_BdJ_WpAPVxkCmTc6hkJ_itPvu2nv6hg-FYmRCs3GA7dChRzALsUt2NCsMuoMDMcYoAPRGK7HJ8HkKvlTeFEb0xTHm00HqlXfXavkCHXx6JPzNBfDr_E0OQPlIuH2fbTn3fuEpH7VBF45bJ050jq0UxRi69ZyGtXA8uGqfgOkGRA86HCyndsQqoI7DboE_-zevswtiiblK" 
                 alt="SIGAP" 
-                className="h-8 w-8 rounded-full object-cover mr-2"
+                className="h-8 w-8 rounded-full object-cover mr-2 shadow-sm"
               />
-              <span className="font-bold text-xl text-[#0b57d0] tracking-tight">SIGAP</span>
+              <span className="font-bold text-xl text-primary tracking-tight">SIGAP</span>
             </div>
             <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
               {navLinks.map((link) => {
@@ -49,10 +53,10 @@ export default function WargaTopNav() {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                    className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors ${
                       isActive 
-                        ? 'border-[#0b57d0] text-[#0b57d0]' 
-                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                        ? 'border-primary text-primary' 
+                        : 'border-transparent text-text-muted hover:border-border hover:text-text-main'
                     }`}
                   >
                     <span className="material-symbols-outlined text-[18px] mr-1">{link.icon}</span>
@@ -63,18 +67,33 @@ export default function WargaTopNav() {
             </div>
           </div>
           
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <button className="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b57d0]">
-              <span className="material-symbols-outlined">notifications</span>
+          <div className="hidden sm:ml-6 sm:flex sm:items-center gap-2">
+            
+            {/* Theme Toggle */}
+            {mounted && (
+              <button 
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 rounded-full text-text-muted hover:bg-surface-hover hover:text-text-main transition-colors"
+                title="Ganti Tema"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+                </span>
+              </button>
+            )}
+
+            <button className="p-2 rounded-full text-text-muted hover:bg-surface-hover hover:text-text-main transition-colors">
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
             </button>
-            <div className="ml-3 relative flex items-center gap-3 border-l border-gray-200 pl-4">
+            
+            <div className="ml-3 relative flex items-center gap-3 border-l border-border pl-4">
               <div className="flex flex-col items-end">
-                <span className="text-sm font-medium text-gray-700">{user?.name || 'Warga'}</span>
-                <span className="text-xs text-gray-500">Warga</span>
+                <span className="text-sm font-semibold text-text-main">{user?.name || 'Warga'}</span>
+                <span className="text-xs text-text-muted font-medium">Warga</span>
               </div>
               <button 
                 onClick={handleLogout}
-                className="flex items-center text-sm font-medium text-red-600 hover:text-red-800 ml-2 bg-red-50 px-3 py-1.5 rounded-full transition-colors"
+                className="flex items-center text-sm font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 ml-2 bg-red-50 dark:bg-red-500/10 px-4 py-1.5 rounded-full transition-colors border border-red-100 dark:border-red-500/20"
               >
                 <span className="material-symbols-outlined text-[18px] mr-1">logout</span>
                 Keluar
@@ -82,10 +101,22 @@ export default function WargaTopNav() {
             </div>
           </div>
 
-          <div className="-mr-2 flex items-center sm:hidden">
+          <div className="-mr-2 flex items-center sm:hidden gap-2">
+            {/* Theme Toggle Mobile */}
+            {mounted && (
+              <button 
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2 rounded-full text-text-muted hover:bg-surface-hover hover:text-text-main transition-colors"
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+                </span>
+              </button>
+            )}
+            
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#0b57d0]"
+              className="inline-flex items-center justify-center p-2 rounded-md text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors"
             >
               <span className="material-symbols-outlined">{isMenuOpen ? 'close' : 'menu'}</span>
             </button>
@@ -94,7 +125,7 @@ export default function WargaTopNav() {
       </div>
 
       {isMenuOpen && (
-        <div className="sm:hidden border-t border-gray-200 bg-white">
+        <div className="sm:hidden border-t border-border bg-surface absolute w-full shadow-lg">
           <div className="pt-2 pb-3 space-y-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -102,23 +133,23 @@ export default function WargaTopNav() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium flex items-center ${
+                  className={`pl-3 pr-4 py-3 border-l-4 text-base font-medium flex items-center transition-colors ${
                     isActive 
-                      ? 'bg-blue-50 border-[#0b57d0] text-[#0b57d0]' 
-                      : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
+                      ? 'bg-primary/5 border-primary text-primary' 
+                      : 'border-transparent text-text-muted hover:bg-surface-hover hover:border-border hover:text-text-main'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <span className="material-symbols-outlined mr-3">{link.icon}</span>
+                  <span className="material-symbols-outlined mr-3 text-[20px]">{link.icon}</span>
                   {link.name}
                 </Link>
               );
             })}
             <button
               onClick={() => { setIsMenuOpen(false); handleLogout(); }}
-              className="w-full text-left block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-red-600 hover:bg-red-50 hover:border-red-300 flex items-center"
+              className="w-full text-left pl-3 pr-4 py-3 border-l-4 border-transparent text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 flex items-center transition-colors"
             >
-              <span className="material-symbols-outlined mr-3">logout</span>
+              <span className="material-symbols-outlined mr-3 text-[20px]">logout</span>
               Keluar
             </button>
           </div>
