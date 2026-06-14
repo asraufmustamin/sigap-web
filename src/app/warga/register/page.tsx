@@ -90,7 +90,7 @@ export default function WargaRegister() {
               </div>
             ) : null}
 
-            <div className="flex flex-col gap-4 mb-4">
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
               {/* Name Input */}
               <div className="relative flex-1">
                 <input
@@ -106,7 +106,7 @@ export default function WargaRegister() {
                   htmlFor="name"
                   className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none whitespace-nowrap"
                 >
-                  Nama Lengkap Sesuai KTP
+                  Nama Lengkap
                 </label>
               </div>
 
@@ -125,7 +125,7 @@ export default function WargaRegister() {
                   htmlFor="nik"
                   className="absolute left-3 top-4 z-10 origin-left -translate-y-7 scale-75 transform bg-white px-1 text-base text-[#444746] duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-7 peer-focus:scale-75 peer-focus:text-[#0b57d0] pointer-events-none whitespace-nowrap"
                 >
-                  Nomor Induk Kependudukan
+                  NIK
                 </label>
               </div>
             </div>
