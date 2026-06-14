@@ -13,12 +13,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const description = formData.get('description') as string || '';
-    const lat = parseFloat(formData.get('lat') as string) || 0;
-    const lng = parseFloat(formData.get('lng') as string) || 0;
-    const category = formData.get('category') as string || 'Lainnya';
-    const reporter_id = formData.get('reporter_id') as string || null;
+    const body = await request.json();
+    const description = body.description || '';
+    const lat = body.lat || 0;
+    const lng = body.lng || 0;
+    const category = body.category || 'Lainnya';
+    const reporter_id = body.reporter_id || null;
     
     // In a real app, you would process the file (image) here and upload to S3/Cloudinary/Hostinger
     // For now, we simulate success
