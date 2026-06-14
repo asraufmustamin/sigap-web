@@ -39,7 +39,7 @@ export default function LoginPage() {
         toast.success('Login berhasil');
         router.push('/');
       }
-    } catch (err: any) {
+    } catch {
       toast.error('Terjadi kesalahan', { description: 'Gagal terhubung ke server.' });
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ export default function LoginPage() {
             <div className="mb-6 relative">
               <input
                 type="text"
-                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-[2px] focus:border-[#0b57d0] transition-colors"
+                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] transition-colors"
                 placeholder=" "
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -94,7 +94,7 @@ export default function LoginPage() {
             <div className="mb-2 relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-[2px] focus:border-[#0b57d0] transition-colors"
+                className="peer w-full h-[56px] px-4 pt-4 pb-1 text-base text-[#1f1f1f] bg-transparent border border-[#747775] rounded-[4px] outline-none focus:border-2 focus:border-[#0b57d0] transition-colors"
                 placeholder=" "
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
